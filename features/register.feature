@@ -8,9 +8,9 @@ Scénario : Une personne voudrait s'inscrire
 
     Étant donné qu'une personne à découvert le site 
     Et qu'elle est intéressée pour donner son avis 
-    Et qu'il remplit les informations demandées 
+    Et qu'elle remplit les informations demandées 
     Lorsque la personne valide ses informations 
-    Alors il se retrouve inscrit
-    Et il peut publier et donner son avis 
+    Alors elle se retrouve inscrit
+    Et elle peut publier et donner son avis 
 
 
