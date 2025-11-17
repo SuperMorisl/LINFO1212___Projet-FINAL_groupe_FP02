@@ -1,4 +1,4 @@
-# LINFO1212---Projet-FINAL
+# LINFO1212---Projet-FINAL DU GROUPE FP02
 # 🎬 C’est tourné ! — Plateforme communautaire de films & séries
 
 Bienvenue sur le dépôt GitHub du projet **C’est tourné !**, une plateforme web communautaire permettant aux utilisateurs de découvrir, noter et commenter films et séries.  
