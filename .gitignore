@@ -1,2 +1,5 @@
-.vscode-notebook/
-spring-boot/
+/.vscode-notebooks/
+**/node_modules/
+**/package-lock.json
+**/coverage/
+**/db/

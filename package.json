@@ -1,0 +1,25 @@
+{
+  "name": "player",
+  "version": "1.0.0",
+  "description": "\"C'est tourné!\"",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SuperMorisl/LINFO1212---Projet-FINAL.git"
+  },
+  "author": "\"Belarbi Younes, Scyer Sofia, Pinnoy Maurice\"",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/SuperMorisl/LINFO1212---Projet-FINAL/issues"
+  },
+  "homepage": "https://github.com/SuperMorisl/LINFO1212---Projet-FINAL#readme",
+  "dependencies": {
+    "mongodb": "^7.0.0"
+  }
+}
