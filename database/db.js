@@ -26,12 +26,12 @@ async function seedCollection(collection, filePath) {
 // Initialisation DB + seed si vide
 async function initDB() {
   await client.connect();   //connexion avec la db 
-  const dbo = client.db("C'est tourné");
+  const dbo = client.db("cest_tourne"); // "C'est tourné" est invalide comme nom...
   moviesCollection = dbo.collection("movies");
   usersCollection = dbo.collection("users");
   seriesCollection = dbo.collection("series");
   trophiesCollection = dbo.collection("trophies");
-  console.log("Connexion à MongoDB (C'est tourné!) réussie !");
+  console.log("Connexion à MongoDB (cest_tourne) réussie !");
   
   await seedCollection(moviesCollection, path.join('database', 'movies.json'));
   await seedCollection(usersCollection, path.join('database', 'users.json'));
