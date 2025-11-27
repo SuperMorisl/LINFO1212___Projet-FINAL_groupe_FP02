@@ -105,12 +105,17 @@ Le projet inclut plusieurs scénarios, notamment :
 git clone <url-du-projet>
 cd <nom-du-dossier>
 npm install
+```
 
 ## 🏁 Lancement
 
-`sudo systemctl start mongod` <br>
-`node app.js`
+```bash
+sudo systemctl start mongod
+node app.js
+```
 
 ## 🧪 Tests
 
-`npm test` 
+```bash
+npm test 
+```
