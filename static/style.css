@@ -1,3 +1,110 @@
-h1 {
-    color: blue;
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800');
+
+body {
+    margin: 0;
+    background-color: #030712;
+    color: white;
+    font-family: "Assistant", sans-serif;
+    font-size: 1.1rem;
+}
+
+.blue {
+    color: #2A7BF8;
+}
+
+img.icon {
+    width: 1.8rem;
+}
+
+nav {
+    display: flex;
+    width : 100vw;
+    padding: 1rem;
+    box-sizing: border-box; /* 100vw (width) + 1rem (padding) = 100vw */
+
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #0F1727;
+    border-bottom: solid 1.8px #1C2636;
+}
+
+nav .logo,
+nav .actions,
+nav .actions .ajouter,
+nav .actions .connecter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 2.2rem;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-radius: 8px;
+
+    gap: 0.8rem;
+}
+
+nav .actions .ajouter {
+    background-color: #155DFC;
+    font-weight: 500;
+}
+
+nav .actions .connecter {
+    background-color: rgb(255, 255, 255);
+    background-image: url('image/person.png');
+    background-size: 45%;
+    background-repeat: no-repeat;
+    background-position: center;
+    aspect-ratio: 1; /* width / height = 1 */
+}
+
+/* Style de la barre de recherce - DEBUT */
+
+.searchbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 45%;
+}
+
+input {
+    width: 100%;
+    height: 2.2rem;
+    padding-left: 2.5rem;
+
+    border: solid 2px #333E51;
+    border-radius: 8px;
+    outline: none;
+    background-color: #1E2939;
+
+    color: #eff0ff;
+    font-family: "Assistant", sans-serif;
+    font-size: 0.9rem;
+
+    transition: all 0.09s ease-in-out;
+    cursor: text;
+}
+
+input:active {
+    transform: scale(0.95);
+}
+
+input::placeholder {
+    color: #93949e;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    fill: #bdbecb;
+    width: 1rem;
+    z-index: 1; /* Il est au dessus de la searchbar */
+}
+
+/* Style de la barre de recherce - FIN */
+
+/* Pour changer certains attributs pour que ça soit responsive sur mobile */
+@media (max-width: 500px) {
+
 }
