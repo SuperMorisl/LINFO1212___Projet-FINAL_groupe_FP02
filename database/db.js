@@ -14,7 +14,8 @@ let trophiesCollection = null;
 async function seedCollection(collection, filePath) {
   const count = await collection.countDocuments();
   if (count === 0) {
-    const dataRaw = fs.readFileSync(filePath, 'utf8');  //parcourt le json 
+    const dataRaw = fs.readFileSync(filePath, 'utf8').trim();  //parcourt le json 
+    if (!dataRaw){return;}    // Pour ne pas planter si le fichier JSON est vide
     const documents = dataRaw.split('\n')
       .filter(line => line.trim() !== '')
       .map(line => JSON.parse(line));
@@ -32,7 +33,7 @@ async function initDB() {
   seriesCollection = dbo.collection("series");
   trophiesCollection = dbo.collection("trophies");
   console.log("Connexion à MongoDB (cest_tourne) réussie !");
-  
+
   await seedCollection(moviesCollection, path.join('database', 'movies.json'));
   await seedCollection(usersCollection, path.join('database', 'users.json'));
   await seedCollection(seriesCollection, path.join('database', 'series.json'));
@@ -45,4 +46,4 @@ async function getCollection(collectioname) {  //avoir la collection pour l'app.
 }
 
 
-module.exports = { initDB, getCollection,moviesCollection, usersCollection, trophiesCollection, seriesCollection };
+module.exports = { initDB, getCollection, moviesCollection, usersCollection, trophiesCollection, seriesCollection };

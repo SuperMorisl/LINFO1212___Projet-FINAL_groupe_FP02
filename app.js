@@ -3,7 +3,7 @@ var session = require('express-session');
 var app = express();
 var bodyParser = require("body-parser");
 
-const db = require('./database/db');
+const dbModule = require('./database/db');
 
 // Configuration de l'app
 app.use(session({ // On crée une session (Cookies)
@@ -23,20 +23,24 @@ app.get('/', function (req, res) {
     res.render('index');
   }
   catch (err) {
-    res.status(500).send("Probléme avec la récup des données dans la db");
+    res.status(500).send("Problème avec la récuppération des données dans la db");
   }
 });
 
-// Je l'ai mis en commentaire sinon ça bug vu que la db est vide
-//initialisation db
-// (async () => {
-  // await db.initDB();  //utilisation de la db
-  // app.get('/movies', async (req, res) => {
-  // const movies = await db.getCollection(db.moviesCollection); //on récup tt de movies
-  // res.render('movies', { movies });
-// });
-// })();
 
+// Démarrage du serveur après initialisation de la DB
+async function startServer(test) {
+  try {
+    const { moviesCollection, usersCollection, seriesCollection, trophiesCollection } = await dbModule.initDB();        // On attend que la DB soit prête
+    
+    if (!test) { // Cela evite d'interferer avec les SuperTests
+      app.listen(3000);            // Puis on démarre le serveur
+      console.log("Serveur démarré sur http://localhost:3000");
+    }
+    return {moviesCollection, seriesCollection}
+  } catch (err) {
+    console.error("Erreur lors de l'initialisation de MongoDB... :", err);
+  }
+}
 
-app.listen(3000, () => console.log("Serveur démarré sur http://localhost:3000"));
-
+startServer(false); // test = false
