@@ -1,0 +1,1 @@
+const checkReportInput = require('./checkAddInput');
