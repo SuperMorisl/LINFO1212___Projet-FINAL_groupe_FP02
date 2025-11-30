@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
+const { get } = require('https');
 
 // Connexion à la database
 const client = new MongoClient("mongodb://localhost:27017");
@@ -27,7 +28,7 @@ async function seedCollection(collection, filePath) {
 // Initialisation DB + seed si vide
 async function initDB() {
   await client.connect();   //connexion avec la db 
-  const dbo = client.db("cest_tourne"); // "C'est tourné" est invalide comme nom...
+  const dbo = client.db("cest_tourne");
   moviesCollection = dbo.collection("movies");
   usersCollection = dbo.collection("users");
   seriesCollection = dbo.collection("series");
@@ -40,10 +41,30 @@ async function initDB() {
   await seedCollection(trophiesCollection, path.join('database', 'trophies.json'));
   return { moviesCollection, seriesCollection, usersCollection, trophiesCollection };
 }
-async function getCollection(collectioname) {  //avoir la collection pour l'app.js
-  if (!collectioname) throw new Error("La collection n'a pas été trouvée...");
-  return await collectioname.find().toArray();
+async function getCollection(collection) {  //avoir la collection pour l'app.js
+  if (!collection) throw new Error("La collection n'a pas été trouvée...");
+  return await collection.find().toArray();
+}
+async function getMovies() {
+  return await getCollection(moviesCollection);
+}
+
+//à voir pour la gestion des utilisateurs ayant un accés admin 
+/*async function getUsers() {
+  return await getCollection(usersCollection);
+}*/ 
+
+
+async function getSeries() {
+  return await getCollection(seriesCollection);
+}
+async function getTrophies() {
+  return await getCollection(trophiesCollection);
 }
 
 
-module.exports = { initDB, getCollection, moviesCollection, usersCollection, trophiesCollection, seriesCollection };
+module.exports = { 
+  initDB,  
+  getMovies, 
+  getSeries, 
+  getTrophies };

@@ -7,6 +7,7 @@ const checkLoginInput = require('./tests/checkLoginInput');
 const checkAddInput = require('./tests/checkAddInput');
 
 const dbModule = require('./database/db');
+const {initDB, getCollection } = require('./database/db')
 
 // Configuration de l'app
 app.use(session({ // On crée une session (Cookies)
@@ -27,18 +28,20 @@ app.use(bodyParser.urlencoded({ extended: true })); // Permet de recupérer les 
 app.get('/', async function (req, res) {
   
   try {
-    //const allMovies = await dbModule.getCollection("movies"); // Pour plus tard
-    //const allSeries = await dbModule.getCollection("series");
+    const allMovies = dbModule.getMovies; // Pour plus tard
+    const allSeries = dbModule.getSeries;
     res.render('index', {
-      //movies: allMovies,
-      //series: allSeries
+      username: req.session.username,
+      movies: allMovies,
+      series: allSeries, 
+      error: null
     });
   } catch (err) {
-    res.status(500).send("Problème avec la récuppération des données dans la db");
+    res.status(500).send("Problème avec la récupération des données dans la db");
   }
 });
 
-app.get('/login', function (req, res){
+app.get('/login',async function (req, res){
   res.render('login');
 });
 
