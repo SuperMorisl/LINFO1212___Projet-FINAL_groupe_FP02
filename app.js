@@ -8,7 +8,7 @@ const checkAddInput = require('./tests/checkAddInput');
 
 const dbModule = require('./database/db');
 const {initDB, getCollection } = require('./database/db')
-
+let usersCollection = null;
 // Configuration de l'app
 app.use(session({ // On crée une session (Cookies)
   secret: 'monsecret',
@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Permet de recupérer les 
 app.get('/', async function (req, res) {
   
   try {
-    const allMovies = dbModule.getMovies; // Pour plus tard
+    const allMovies = dbModule.getMovies; //renvoi des films et séries dans la page d'accueil
     const allSeries = dbModule.getSeries;
     res.render('index', {
       username: req.session.username,
@@ -41,9 +41,34 @@ app.get('/', async function (req, res) {
   }
 });
 
-app.get('/login',async function (req, res){
-  res.render('login');
+
+//---------------------------------------------------
+//login à remodifier ?
+app.get('/login', (req, res) => {
+  res.render('login', { error: null, hasAccount: null }); // error permet de vérifier si le mot de passe est correct (voir dans login.ejs)
 });
+
+app.post('/login', async (req, res) => {
+  try {
+    const actualUser = await usersCollection.findOne({ username: req.body.username }); // On réccupère l'utilisateur s'il existe dans la db
+    if (actualUser && req.body.password == actualUser.password) { // Vérification de si l'utilisateur existe dans db
+      req.session.username = req.body.username;   // Stocke le username dans la session
+      res.redirect('/');
+    }
+    else if (!actualUser) {
+      res.render('login', { error: "Utilisateur non trouvé", hasAccount: true });
+    }
+    else if (req.body.password != actualUser.password) {
+      res.render('login', { error: "Mot de passe incorrect", hasAccount: true });
+    }
+  }
+  catch (err) {
+    res.status(500).send("Probléme avec la récup des données dans la db");
+  }
+});
+//-----------------------------------------------------
+
+
 
 app.get('/add', function (req, res) {
   res.render('add');
@@ -54,8 +79,10 @@ app.get('/add', function (req, res) {
 // Démarrage du serveur après initialisation de la DB
 async function startServer(test) {
   try {
-    const { moviesCollection, usersCollection, seriesCollection, trophiesCollection } = await dbModule.initDB();        // On attend que la DB soit prête
-    
+    const db = await initDB();
+    moviesCollection = db.moviesCollection;
+    seriesCollection = db.seriesCollection;
+    usersCollection = db.usersCollection;
     if (!test) { // Cela évite d'interférer avec les SuperTests
       app.listen(3000);            // Puis on démarre le serveur
       console.log("Serveur démarré sur http://localhost:3000");

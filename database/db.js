@@ -1,12 +1,11 @@
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
-const { get } = require('https');
 
 // Connexion à la database
 const client = new MongoClient("mongodb://localhost:27017");
 let moviesCollection = null; // Collection movies
-let seriesCollection = null; // Collection seies
+let seriesCollection = null; // Collection series
 let usersCollection = null;
 let trophiesCollection = null;
 
@@ -41,23 +40,23 @@ async function initDB() {
   await seedCollection(trophiesCollection, path.join('database', 'trophies.json'));
   return { moviesCollection, seriesCollection, usersCollection, trophiesCollection };
 }
-async function getCollection(collection) {  //avoir la collection pour l'app.js
+
+//fonction générique pour récup la collection
+async function getCollection(collection) {  
   if (!collection) throw new Error("La collection n'a pas été trouvée...");
   return await collection.find().toArray();
 }
+
+
 async function getMovies() {
   return await getCollection(moviesCollection);
 }
 
-//à voir pour la gestion des utilisateurs ayant un accés admin 
-/*async function getUsers() {
-  return await getCollection(usersCollection);
-}*/ 
-
-
 async function getSeries() {
   return await getCollection(seriesCollection);
 }
+
+
 async function getTrophies() {
   return await getCollection(trophiesCollection);
 }
