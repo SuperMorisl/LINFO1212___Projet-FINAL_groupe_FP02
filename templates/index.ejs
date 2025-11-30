@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>C'est tourné ! | Acceuil</title>
+    <title>C'est tourné ! - Page d'acceuil</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/script.js" defer></script>
-    <!-- <link rel="icon" href="/logo.jpg"> -->
+    <link rel="icon" href="image/logo.png">
     <link rel="stylesheet" href="/style.css">
 </head>
 
@@ -17,7 +17,8 @@
             <span class="blue">C'est tourné !</span>
         </div>
         <div class="searchbar">
-            <svg viewBox="0 0 24 24" aria-hidden="true" class="search-icon"> <!-- Dessin de la search icon (trouvé sur Google)-->
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="search-icon">
+                <!-- Dessin de la search icon (trouvé sur Google)-->
                 <g>
                     <path
                         d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z">
@@ -28,9 +29,44 @@
             <input type="search" placeholder="Rechercher un film ou une série..." name="search" />
         </div>
         <div class="actions">
-            <div class="ajouter"><span>+</span><span>Ajouter</span></div>
-            <a href="/login"><button class="connecter"></button></a>
+            <a href="/add">
+                <div class="ajouter"><span>+</span><span>Ajouter</span></div>
+            </a>
+            <a href="/login">
+                <div class="connecter"></div>
+            </a>
         </div>
+
+
+        <div class="burger">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3_h"></div> <!-- Bar caché dans la bar2 -->
+            <div class="bar4"></div>
+        </div>
+        <div class="burger-menu">
+            <div class="burger-searchbar">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="search-icon">
+                    <!-- Dessin de la search icon (trouvé sur Google)-->
+                    <g>
+                        <path
+                            d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z">
+                        </path>
+                    </g>
+                </svg>
+
+                <input type="search" placeholder="Rechercher un film ou une série..." name="search" />
+            </div>
+            <a href="/add">
+                <div class="ajouter"><span>+</span><span>Ajouter</span></div>
+            </a>
+            <a href="/login">
+                <div class="logo">
+                    <div class="connecter"></div><span>Se connecter</span>
+                </div>
+            </a>
+        </div>
+
     </nav>
 </body>
 

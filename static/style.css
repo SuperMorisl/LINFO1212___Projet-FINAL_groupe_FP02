@@ -1,11 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800');
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
     background-color: #030712;
     color: white;
     font-family: "Assistant", sans-serif;
-    font-size: 1.1rem;
 }
 
 .blue {
@@ -29,10 +32,16 @@ nav {
     border-bottom: solid 1.8px #1C2636;
 }
 
+a,
+a:hover {
+    text-decoration: none;
+    color: white;
+}
+
 nav .logo,
 nav .actions,
-nav .actions .ajouter,
-nav .actions .connecter {
+.ajouter,
+.connecter {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,12 +54,19 @@ nav .actions .connecter {
     gap: 0.8rem;
 }
 
-nav .actions .ajouter {
-    background-color: #155DFC;
-    font-weight: 500;
+nav .logo {
+    font-size: 1.1rem;
+    text-wrap: nowrap;
 }
 
-nav .actions .connecter {
+.ajouter {
+    background-color: #155DFC;
+    font-weight: 500;
+    font-size: 1rem;
+    width: fit-content;
+}
+
+.connecter {
     background-color: rgb(255, 255, 255);
     background-image: url('image/person.png');
     background-size: 45%;
@@ -61,7 +77,7 @@ nav .actions .connecter {
 
 /* Style de la barre de recherce - DEBUT */
 
-.searchbar {
+.searchbar, .burger-searchbar {
     position: relative;
     display: flex;
     align-items: center;
@@ -104,13 +120,123 @@ input::placeholder {
 
 /* Style de la barre de recherce - FIN */
 
-/* Pour changer certains attributs pour que ça soit responsive sur mobile */
-@media (max-width: 500px) {
+/* Style du burger menu (icon) - DEBUT */
 
+.burger {
+    position: relative;
+    display: none; /* Visible que sur une écran 550px ou moins */
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 8px;
+
+    height: 2.2rem;
+    border-radius: 15px;
+    z-index: 2;
+}
+
+.bar1,
+.bar2,
+.bar3_h,
+.bar4 {
+    border-radius: 30px;
+    background-color: #155DFC;
+    width: 1.8rem;
+    transition: 0.4s;
+    height: 3px;
+}
+
+.bar2 {
+    position: absolute;
+}
+
+.burger:hover {
+    border-radius: 50px;
+}
+
+.burger:hover .bar3_h {
+    transform: rotate(-45deg);
+}
+
+.burger:hover .bar2 {
+    transform: rotate(45deg);
+}
+
+.burger:hover .bar1,
+.burger:hover .bar4 {
+    opacity: 0;
+}
+
+/* Style du burger menu (icon) - FIN */
+
+
+/* Style du burger menu (menu) - DEBUT */
+
+.burger-menu {
+    display: none; /* caché par défaut */
+    flex-direction: column;
+    align-items: flex-start;
+
+    position: absolute;
+    top: 50.8px;
+    right: 0;
+
+    width: fit-content;
+    padding: 1rem;
+    row-gap: 0.6rem;
+
+    background-color: #0F1727;
+    border: solid 1.8px #1C2636;
+    border-top: solid 1.8px #0F1727;
+    border-radius: 0 0 0 8px;
+}
+
+.burger-menu .logo {
+    padding: 0;
+    gap: 0.6rem;
+}
+
+.burger-menu .ajouter,
+.burger-menu .logo {
+    font-size: 0.95rem;
+}
+
+.burger-menu .ajouter,
+.burger-menu .connecter {
+    height: 1.5rem;
+}
+
+.burger-searchbar {
+    width: 70vw;
+    max-width: 300px;
+    margin-bottom: 0.6rem;
+}
+
+
+/* Style du burger menu (menu) - FIN */
+
+/* Pour changer certains attributs pour que ça soit responsive sur mobile */
+@media (max-width: 550px) {
+    nav {
+        padding: 0.5rem;
+        padding-left: 1rem;
+        padding-right: 2rem;
+    }
+
+    nav .actions,
+    nav .searchbar {
+        display: none;
+    }
+
+    nav .burger {
+        display: flex;
+    }
 }
 
 
 /*======================TEMPORAIRE========================*/
+
+
 
 /* Fond flouté */
 .login-bg {
