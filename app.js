@@ -6,8 +6,8 @@ var bodyParser = require("body-parser");
 const checkLoginInput = require('./tests/checkLoginInput');
 const checkAddInput = require('./tests/checkAddInput');
 
-const dbModule = require('./database/db');
-const {initDB, getCollection } = require('./database/db')
+const dbModule = require('./database/db'); // renvoie un dico avec les imports : fonctions (voir exports db.js)
+
 let usersCollection = null;
 // Configuration de l'app
 app.use(session({ // On crée une session (Cookies)
@@ -28,8 +28,8 @@ app.use(bodyParser.urlencoded({ extended: true })); // Permet de recupérer les 
 app.get('/', async function (req, res) {
   
   try {
-    const allMovies = dbModule.getMovies; //renvoi des films et séries dans la page d'accueil
-    const allSeries = dbModule.getSeries;
+    const allMovies = await dbModule.getMovies(); //renvoi des films et séries dans la page d'accueil
+    const allSeries = await dbModule.getSeries();
     res.render('index', {
       username: req.session.username,
       movies: allMovies,
@@ -79,7 +79,7 @@ app.get('/add', function (req, res) {
 // Démarrage du serveur après initialisation de la DB
 async function startServer(test) {
   try {
-    const db = await initDB();
+    const db = await dbModule.initDB();
     moviesCollection = db.moviesCollection;
     seriesCollection = db.seriesCollection;
     usersCollection = db.usersCollection;

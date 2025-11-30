@@ -66,4 +66,5 @@ module.exports = {
   initDB,  
   getMovies, 
   getSeries, 
-  getTrophies };
+  getTrophies,
+  getCollection };
