@@ -30,10 +30,12 @@ app.get('/', async function (req, res) {
   try {
     const allMovies = await dbModule.getMovies(); //renvoi des films et séries dans la page d'accueil
     const allSeries = await dbModule.getSeries();
+    const allGenres = await dbModule.getGenres();
     res.render('index', {
       username: req.session.username,
       movies: allMovies,
       series: allSeries, 
+      genres: allGenres,
       error: null
     });
   } catch (err) {

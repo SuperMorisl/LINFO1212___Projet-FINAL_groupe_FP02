@@ -61,10 +61,32 @@ async function getTrophies() {
   return await getCollection(trophiesCollection);
 }
 
+async function getGenres() {
+  const movies = await getMovies();
+  const series = await getSeries();
+
+  const genres = new Set();
+
+  for (const movie of movies) {
+    for (const genre of movie.genre) {
+      genres.add(genre)
+    }
+  }
+
+  for (const serie of series) {
+    for (const genre of serie.genre) {
+      genres.add(genre)
+    }
+  }
+
+  return genres
+}
+
 
 module.exports = { 
   initDB,  
   getMovies, 
-  getSeries, 
+  getSeries,
+  getGenres, 
   getTrophies,
   getCollection };
