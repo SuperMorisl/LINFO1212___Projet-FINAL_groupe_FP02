@@ -295,6 +295,7 @@ input::placeholder {
     border: solid 2px #333E51;
     border-top: none;
     border-radius: 0 0 6px 6px;
+    z-index: 3;
 }
 
 .options.show {
@@ -314,6 +315,13 @@ input::placeholder {
 /* Style des filtres - FIN */
 
 /* Style des oeuvres - DEBUT */
+
+.tendance-icon {
+    margin: 1.5rem 0;
+    margin-left: 2vw;
+    justify-content: start;
+    font-weight: 300;
+}
 
 .oeuvres {
     display: grid;
@@ -338,8 +346,9 @@ input::placeholder {
     cursor: pointer;
 }
 
-.oeuvre:hover {
-    transform: scale(1.03);
+.oeuvre:hover,
+.tendance:hover {
+    transform: scale(1.01);
 }
 
 .type, .popularite {
@@ -374,7 +383,7 @@ input::placeholder {
     left: 30px;
 }
 
-.popularite-type {
+.details .ensemble {
     display: flex;
     gap: 0.7rem;
     align-items: center;
@@ -398,7 +407,9 @@ input::placeholder {
 }
 
 .description h1,
-.description h2 {
+.description h2,
+.notes,
+.genres {
     margin: 0;
     padding: 0;
     font-size: 1rem;
@@ -408,12 +419,29 @@ input::placeholder {
     padding: 0.3rem 0.7rem;
 
     background-color: #0f172746;
-    border-radius: 15px;
+    border-radius: 15px 15px 0 0;
 }
 
-.description h2 {
-    margin-top: 0.7rem;
+.description h2,
+.genres {
     font-weight: 200;
+    border-radius: 0 15px 15px 15px;
+}
+
+.notes,
+.genres {
+    padding: 0 0.7rem;
+    border-radius: 15px;
+    text-align: center;
+}
+
+span.star {
+    color: #fcf950;
+    font-size: 1.5rem;
+}
+
+span.grey {
+    color: #93949e;
 }
 
 /* Style des oeuvres - FIN */
@@ -445,9 +473,15 @@ input::placeholder {
         display: none;
     }
 
+    /* Style du burger menu - DEBUT */
+
     nav .burger {
         display: flex;
     }
+
+    /* Style du burger menu - FIN */
+
+    /* Style des filtres - DEBUT */
 
     .filter-container {
         width: 98vw;
@@ -480,13 +514,47 @@ input::placeholder {
         padding: 0.5rem;
     }
 
-    .oeuvres {
+    /* Style des filtres - FIN */
+
+    /* Style des oeuvres - DEBUT */
+
+    .oeuvres,
+    .tendance {
         width: 90vw;
+    }
+
+    .tendance .details {
+        top: 38%;
+        left: 0;
     }
 
     .description {
         max-width: 100%;
     }
+
+    .oeuvre .type {
+        font-size: 0.95rem;
+    }
+
+
+    .details .ensemble,
+    .description h1,
+    .description h2,
+    .notes,
+    .genres {
+        font-size: 0.83rem;
+    }
+
+    .details .ensemble {
+        gap: 0.3rem;
+        padding: 0 0.3rem;
+    }
+
+    span.star {
+        font-size: 1.1rem;
+    }
+
+    /* Style des oeuvres - FIN */
 }
 
 
