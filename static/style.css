@@ -230,10 +230,12 @@ input::placeholder {
 /* Style des filtres - DEBUT */
 
 .filter-container {
-    width: 98vw;
+    width: 97vw;
     height: 4rem;
     padding: 0;
     margin: auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
     justify-content: flex-start;
     gap: 1rem;
 
@@ -311,6 +313,111 @@ input::placeholder {
 
 /* Style des filtres - FIN */
 
+/* Style des oeuvres - DEBUT */
+
+.oeuvres {
+    display: grid;
+    gap: 1.5rem;
+    width: 97vw;
+    margin: auto;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* colonnes flexibles */
+    max-width: calc(5 * 300px + 4 * 1.5rem); /* maximum 5 colonnes + gaps */
+}
+
+.oeuvre, .tendance {
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.oeuvre img, .tendance img {
+    display: block;
+    max-width: 100%;       
+    height: 100%;
+    border-radius: 15px;
+    object-fit: cover;  /* recadrage si nécessaire */
+    cursor: pointer;
+}
+
+.oeuvre:hover {
+    transform: scale(1.03);
+}
+
+.type, .popularite {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+
+    background-color: #0F1727;
+    font-weight: 400;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.tendance {
+    width: 97vw;
+    margin: auto;
+    aspect-ratio: 16 / 4;
+    min-height: 50vh;
+}
+
+.tendance img {
+    width: 100%;     
+}
+
+.tendance .details {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.7rem;
+    position: absolute;
+    top: 50%;
+    left: 30px;
+}
+
+.popularite-type {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+}
+
+.tendance .type,
+.popularite {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.popularite {
+    background-color: #155DFC;
+    color: #1C2636;
+    font-weight: 600;
+}
+
+.description {
+    max-width: 60%;
+}
+
+.description h1,
+.description h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 300;
+
+    width: fit-content;
+    padding: 0.3rem 0.7rem;
+
+    background-color: #0f172746;
+    border-radius: 15px;
+}
+
+.description h2 {
+    margin-top: 0.7rem;
+    font-weight: 200;
+}
+
+/* Style des oeuvres - FIN */
+
 
 /* Pour changer certains attributs pour que ça soit responsive sur mobile */
 @media (max-width: 550px) {
@@ -343,6 +450,9 @@ input::placeholder {
     }
 
     .filter-container {
+        width: 98vw;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
         justify-content: space-evenly;
         height: 3.5rem;
         gap: 0;
@@ -370,7 +480,13 @@ input::placeholder {
         padding: 0.5rem;
     }
 
+    .oeuvres {
+        width: 90vw;
+    }
 
+    .description {
+        max-width: 100%;
+    }
 }
 
 
