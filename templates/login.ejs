@@ -22,10 +22,32 @@
       <label>Mot de passe</label>
       <input type="password" name="password" required>
       <button type="submit">Se connecter</button>
+
+       <% if (error && hasAccount) { %>
+                    <p class="error"><%= error %></p>
+                <% } %>
+
     </form>
-    <% if (error) { %>
-      <p style="color:red"><%= error %></p>
-    <% } %>
+    
+  </div>
+  <div>
+    <h2>Inscription</h2>
+    <form action="/register" method="POST">
+      <label>Nom d'utilisateur</label>
+      <input type="text" name="username" required>
+      <label>Mot de passe</label>
+      <input type="password" name="password" required>
+      <label>Nom complet</label>
+      <input type="text" name="name" required>
+      <label>Adresse e-mail</label>
+      <input type="email" name="email" required>
+      <button type="submit">S'inscrire</button>
+
+      <% if (error && !hasAccount) { %>
+                    <p class="error"><%= error %></p>
+                <% } %>
+                
+    </form>
   </div>
 </body>
 

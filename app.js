@@ -44,8 +44,7 @@ app.get('/', async function (req, res) {
 });
 
 
-//---------------------------------------------------
-//login à remodifier ?
+//------------------------------------------------------------------
 app.get('/login', (req, res) => {
   res.render('login', { error: null, hasAccount: null }); // error permet de vérifier si le mot de passe est correct (voir dans login.ejs)
 });
@@ -68,12 +67,47 @@ app.post('/login', async (req, res) => {
     res.status(500).send("Probléme avec la récup des données dans la db");
   }
 });
-//-----------------------------------------------------
 
+app.post('/register', async function (req, res) {
+  try {
+    const user = await usersCollection.findOne({ username: req.body.username });
+    if (user) {
+      res.render('login', { error: "L'utilisateur existe déjà", hasAccount: false });
+    }
+    else if (req.body.username && req.body.password && req.body.name && req.body.email) {
+      if (!checkLoginInput.isValidUsername(req.body.username)) {
+        res.render('login', { error: "Nom d'utilisateur invalide", hasAccount: false });
+      }
+      if (!checkLoginInput.isValidEmail(req.body.email)) {
+        res.render('login', { error: "Adresse email invalide", hasAccount: false });
+      }
+      if (!checkLoginInput.isValidPassword(req.body.password)) {
+        res.render('login', { error: "Mot de passe invalide", hasAccount: false });
+      }
+
+      const newUser = { "username": req.body.username, "password": req.body.password, "name": req.body.name, "email": req.body.email };
+      await usersCollection.insertOne(newUser);
+      console.log("Nouvel utilisateur ajouté à la base de données :", req.body.username);
+      req.session.username = req.body.username;
+      res.redirect('/');
+    }
+  }
+  catch (err) {
+    res.status(500).send("Problème avec la récup des données dans la db");
+  }
+
+});
+
+//------------------------------------------------------------------------
 
 
 app.get('/add', function (req, res) {
-  res.render('add');
+  if (req.session.username) {
+    res.render('add', { username: req.session.username, error: null });
+  } else {
+    res.redirect('/login')
+  }
+
 });
 
 //--------------------------------------------------------------------------------------------------------------------------------------
