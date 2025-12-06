@@ -51,21 +51,21 @@ app.get('/', async function (req, res) {
 });
 
 // Fonction pour la barre de recherche de la page index.ejs
-app.post('/search', async function (req, res) {
+app.post('/search', async function (req, res) { // il peut y avoir plusieurs séries et films avec un même titre
   const title = req.body.search.trim(); // on réccupère le nom du film ou de la série
-
-  if (!title) {
-    res.redirect('/');
+  if (!title || title === "") {
+    return res.redirect('/'); // le return sert à éviter que le reste de la fonction ne se fasse
   }
 
   try {
     const allGenres = await dbModule.getGenres();
-    const series = await seriesCollection.find({ title: { $regex: `^${title}$`, $options: 'i' } }).toArray();
-    const movies = await moviesCollection.find({ title: { $regex: `^${title}$`, $options: 'i' } }).toArray();
     const allSeries = await dbModule.getSeries();
     const allMovies = await dbModule.getMovies();
+    const series = await seriesCollection.find({ title: { $regex: `^${title}$`, $options: 'i' } }).toArray();
+    const movies = await moviesCollection.find({ title: { $regex: `^${title}$`, $options: 'i' } }).toArray();
+    
 
-    if (series.length === 0 && movies.length === 0) { // si aucun résultat n'a été trouvé
+    if (series.length === 0 && movies.length === 0) { // si aucun résultat n'a été trouvé dans la db
       res.render('index', {
         username : req.session.username,
         movies: movies,
@@ -94,7 +94,6 @@ app.post('/search', async function (req, res) {
      res.status(500).send("Erreur dans la réccupération des données");
   }
 });
-
 
 //------------------------------------------------------------------
 app.get('/login', (req, res) => {
@@ -128,7 +127,7 @@ app.post('/login', async (req, res) => {
 app.post('/register', async function (req, res) { // séparer login et register en deux fichiers .ejs différents ???
   try {
     const user = await usersCollection.findOne({ username: req.body.username });
-    if (user) {
+    if (user) { // si l'utilisateur a déjà un compte
       res.render('login', { error: "L'utilisateur existe déjà", hasAccount: false });
     }
     else if (req.body.username && req.body.password && req.body.name && req.body.email) {
@@ -159,15 +158,15 @@ app.post('/register', async function (req, res) { // séparer login et register 
 
 
 app.get('/add', function (req, res) {
-  if (req.session.username) {
+  if (req.session.username) { // l'utilisateur doit être connecté pour pouvoir ajouter une oeuvre
     res.render('add', { username: req.session.username, error: null });
   } else {
-    res.redirect('/login')
+    res.redirect('/login');
   }
 
 });
 
-//app.post('/add', async function (req, res) { --------------------------------------> il faut rajouter les variables dans le fichier add.ejs pour que ça fonctionne
+//app.post('/add', async function (req, res) { --------------------------------------> il faut rajouter les champs : title, author,... dans le fichier add.ejs pour que ça fonctionne
   //if (!checkAddInput.isValidTitle(req.body.title)) {
     //res.render('add', { username: req.session.username, error: "Titre invalide" })
   //} 
