@@ -1,6 +1,6 @@
-{"username" : "moimeme", "password" : "motdepasse123456", "name" : "moi", "email" : "moimeme@gmail.com"}
-{"username" : "Sarah_123", "password" : "secret12345", "name" : "Sarah", "email" : "sarah@hotmail.com"}
-{"username" : "Jean_Michel", "password" : "beauChat5674", "name" : "Jean-Michel", "email" : "Jean_MichelMordant@gmail.com"}
-{"username" : "Linda", "password" : "monCodeSecret123", "name" : "Linda", "email" : "Linda@outlook.com"}
-{"username" : "Benedicte", "password" : "benben1234678", "name" : "Ben", "email" : "ben@gmail.com"}
+{"username" : "moimeme", "password" : "motdepasse123456", "email" : "moimeme@gmail.com", "creation" : 11, "xp" : 0}
+{"username" : "Sarah_123", "password" : "secret12345", "email" : "sarah@hotmail.com"}
+{"username" : "Jean_Michel", "password" : "beauChat5674", "email" : "Jean_MichelMordant@gmail.com"}
+{"username" : "Linda", "password" : "monCodeSecret123", "email" : "Linda@outlook.com"}
+{"username" : "Benedicte", "password" : "benben1234678", "email" : "ben@gmail.com"}
 

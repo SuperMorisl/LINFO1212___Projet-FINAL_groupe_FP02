@@ -5,6 +5,8 @@ html {
     user-select: none;
 }
 
+/* ----------[ DEBUT DU FICHIER index.ejs ]---------- */
+
 body {
     margin: 0;
     background-color: #030712;
@@ -65,6 +67,7 @@ nav .actions,
 }
 
 .ajouter {
+    position: relative;
     background-color: #155DFC;
     font-weight: 500;
     font-size: 1rem;
@@ -72,6 +75,7 @@ nav .actions,
 }
 
 .connecter {
+    position: relative;
     background-color: rgb(255, 255, 255);
     background-image: url('image/person.png');
     background-size: 45%;
@@ -364,23 +368,25 @@ input::placeholder {
 }
 
 .tendance {
+    display: flex;
+    align-items: flex-end;
+
     width: 97vw;
+    padding: 1.5rem;
+    box-sizing: border-box;
+
     margin: auto;
     aspect-ratio: 16 / 4;
-    min-height: 50vh;
-}
-
-.tendance img {
-    width: 100%;     
+    height: 25rem;
+    min-height: fit-content;
+    background-position: center;
+    background-size: cover;
 }
 
 .tendance .details {
     display: flex;
     flex-direction: column;
     row-gap: 0.7rem;
-    position: absolute;
-    top: 50%;
-    left: 30px;
 }
 
 .details .ensemble {
@@ -446,12 +452,155 @@ span.grey {
 
 /* Style des oeuvres - FIN */
 
+/* ----------[ FIN DU FICHIER index.ejs ]---------- */
+
+/* ----------[ DEBUT DU FICHIER login.ejs ]---------- */
+
+.login-page {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 4.5rem;
+    margin-bottom: 3rem;
+}
+
+.form-container {
+    position: relative;
+    max-width: 25rem;
+    width: 45%;
+    padding: 2rem 2.5rem;
+
+    box-sizing: border-box;
+    border-radius: 0.75rem;
+
+    background-color: rgba(17, 24, 39, 1);
+}
+
+.title {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.form {
+    margin-top: 1.5rem;
+}
+
+.input-group {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.input-group label {
+    display: block;
+    color: rgba(156, 163, 175, 1);
+    margin-bottom: 4px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+
+    border-radius: 10px;
+    box-sizing: border-box;
+    border: 1px solid rgba(55, 65, 81, 1);
+    outline: 0;
+
+    background-color: rgba(17, 24, 39, 1);
+    color: rgba(243, 244, 246, 1);
+}
+
+.input-group input:focus {
+    border-color: #2A7BF8;
+}
+
+.sign span,
+.ajouter span {
+    position: relative;
+    z-index: 2;
+    transition: color 0.4s ease;
+}
+
+.sign {
+    position: relative;
+    display: block;
+    margin: auto;
+    margin-top: 3rem;
+    
+    width: 60%;
+    padding: 0.75rem;
+    background-color: #2A7BF8;
+    border: none;
+    border-radius: 12px;
+
+    text-align: center;
+    color: rgba(17, 24, 39, 1);
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: all 0.4s ease;
+}
+
+.sign::before,
+.form-container::before,
+.ajouter::before,
+.connecter::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  border-radius: 12px;
+  z-index: 0;
+
+  filter: blur(0);
+  transition: filter 0.4s ease;
+}
+
+.form-container::before {
+    z-index: -1;
+}
+
+.sign:hover::before,
+.form-container:hover::before,
+.ajouter:hover::before,
+.connecter:hover::before  {
+  background: linear-gradient(90deg, #2a7cf8ce, #6d4cffc8);
+  filter: blur(1.2em);
+}
+
+.form-container:hover::before {
+    filter: blur(0.5em);
+}
+
+.ajouter:hover::before,
+.connecter:hover::before {
+    filter: blur(0.3em)
+}
+
+.connecter:hover::before {
+    background: linear-gradient(90deg, #ffffff54, #f9f7ff4a);
+}
+
+.sign:hover span,
+.ajouter:hover span {
+    color: rgba(255, 255, 255, 0.844);
+}
+
+.sign:active::before {
+  filter: blur(0.2em);
+}
+
+/* ----------[ FIN DU FICHIER login.ejs ]---------- */
+
+
 
 /* Pour changer certains attributs pour que ça soit responsive sur mobile */
 @media (max-width: 550px) {
     body {
         letter-spacing: 0.4px;
     }
+
+    /* ----------[ DEBUT DU FICHIER index.ejs ]---------- */
 
     nav {
         padding: 0.5rem;
@@ -521,6 +670,7 @@ span.grey {
     .oeuvres,
     .tendance {
         width: 90vw;
+        padding: 1rem;
     }
 
     .tendance .details {
@@ -555,33 +705,21 @@ span.grey {
     }
 
     /* Style des oeuvres - FIN */
-}
 
+    /* ----------[ FIN DU FICHIER index.ejs ]---------- */
 
-/*======================TEMPORAIRE========================*/
+    /* ----------[ DEBUT DU FICHIER login.ejs ]---------- */
 
+    .login-page {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 3rem;
+    }
 
+    .form-container {
+        width: 90vw;
+        margin-bottom: 4rem;
+    }
 
-/* Fond flouté */
-.login-bg {
-    background-image: url('/image/home-background.jpg');
-    background-size: cover;
-    background-position: center;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    filter: blur(5px);  /* floute seulement le fond */
-    z-index: 0;
-}
-
-/* Conteneur du formulaire */
-.login-container {
-    position: relative;
-    z-index: 1; /* au-dessus du fond flouté */
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    width: 350px;
-    margin: 10% auto;
+    /* ----------[ FIN DU FICHIER login.ejs ]---------- */
 }

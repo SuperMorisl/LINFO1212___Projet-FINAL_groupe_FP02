@@ -124,24 +124,29 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.post('/register', async function (req, res) { // séparer login et register en deux fichiers .ejs différents ???
+app.post('/register', async function (req, res) { // séparer login et register en deux fichiers .ejs différents ??? Non pas besoin
   try {
     const user = await usersCollection.findOne({ username: req.body.username });
     if (user) { // si l'utilisateur a déjà un compte
-      res.render('login', { error: "L'utilisateur existe déjà", hasAccount: false });
+      return res.render('login', { error: "L'utilisateur existe déjà", hasAccount: false });
     }
-    else if (req.body.username && req.body.password && req.body.name && req.body.email) {
+    else if (req.body.username && req.body.password && req.body.email) {
       if (!checkLoginInput.isValidUsername(req.body.username)) {
-        res.render('login', { error: "Nom d'utilisateur invalide", hasAccount: false });
+        return res.render('login', { error: "Nom d'utilisateur invalide", hasAccount: false });
       }
       if (!checkLoginInput.isValidEmail(req.body.email)) {
-        res.render('login', { error: "Adresse email invalide", hasAccount: false });
+        return res.render('login', { error: "Adresse email invalide", hasAccount: false });
       }
       if (!checkLoginInput.isValidPassword(req.body.password)) {
-        res.render('login', { error: "Mot de passe invalide", hasAccount: false });
+        return res.render('login', { error: "Mot de passe invalide", hasAccount: false });
       }
 
-      const newUser = { "username": req.body.username, "password": req.body.password, "name": req.body.name, "email": req.body.email };
+      const creation_date = new Date().toLocaleDateString("fr-FR", {
+        year: "numeric",
+        month: "long",
+      });
+
+      const newUser = { "username": req.body.username, "password": req.body.password, "email": req.body.email, "creation" : creation_date, "xp" : 0};
       await usersCollection.insertOne(newUser);
       console.log("Nouvel utilisateur ajouté à la base de données :", req.body.username);
       req.session.username = req.body.username;
