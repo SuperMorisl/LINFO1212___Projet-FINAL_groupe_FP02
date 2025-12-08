@@ -456,7 +456,7 @@ span.grey {
 
 /* ----------[ DEBUT DU FICHIER login.ejs ]---------- */
 
-.login-page {
+.login-page, .add-page {
     display: flex;
     justify-content: space-evenly;
     margin-top: 4.5rem;
@@ -592,6 +592,44 @@ span.grey {
 
 /* ----------[ FIN DU FICHIER login.ejs ]---------- */
 
+/* ----------[ DEBUT DU FICHIER add.ejs ]---------- */
+
+
+.add-page .form-container {
+    max-width: 35rem;
+}
+
+.white {
+    background-color: white;
+}
+
+.genre-container, .type-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.genre-chip, .type-chip {
+  padding: 8px 14px;
+  border-radius: 20px;
+  background-color: #1E2939;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.genre-chip:hover, .type-chip:hover {
+  background-color: #333E51;
+}
+
+.genre-chip.selected, .type-chip.selected {
+  background-color: #155DFC;
+}
+
+
+
+/* ----------[ FIN DU FICHIER add.ejs ]---------- */
+
 
 
 /* Pour changer certains attributs pour que ça soit responsive sur mobile */
@@ -710,7 +748,7 @@ span.grey {
 
     /* ----------[ DEBUT DU FICHIER login.ejs ]---------- */
 
-    .login-page {
+    .login-page, .add-page {
         flex-direction: column;
         align-items: center;
         margin-top: 3rem;

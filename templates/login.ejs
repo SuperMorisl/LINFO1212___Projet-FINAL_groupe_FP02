@@ -5,7 +5,6 @@
   <meta charset="utf-8" />
   <title>C'est tourné ! - Connexion</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="/script.js" defer></script>
   <link rel="icon" href="image/logo.png">
   <link rel="stylesheet" href="/style.css">
 </head>
@@ -13,62 +12,62 @@
 
 <body>
 
-<nav>
-        <div class="icon">
-            <img src="image/logo.png">
-            <span class="blue">C'est tourné !</span>
+  <nav>
+    <div class="icon">
+      <img src="image/logo.png">
+      <span class="blue">C'est tourné !</span>
+    </div>
+  </nav>
+
+  <div class="login-page">
+
+    <div class="form-container">
+      <p class="blue title">Connexion</p>
+      <form class="form" action="/login" method="POST">
+        <div class="input-group">
+          <label>Nom d'utilisateur</label>
+          <input type="text" name="username" id="username" required>
         </div>
-</nav>
+        <div class="input-group">
+          <label>Mot de passe</label>
+          <input type="password" name="password" id="password" required>
+        </div>
+        <button class="sign" type="submit"><span>Se connecter</span></button>
 
-<div class="login-page">
-
-<div class="form-container">
-  <p class="blue title">Connexion</p>
-  <form class="form" action="/login" method="POST">
-    <div class="input-group">
-      <label>Nom d'utilisateur</label>
-      <input type="text" name="username" id="username" required>
-    </div>
-    <div class="input-group">
-      <label>Mot de passe</label>
-      <input type="password" name="password" id="password" required>
-    </div>
-    <button class="sign" type="submit"><span>Se connecter</span></button>
-
-    <% if (error && hasAccount) { %>
-        <p class="error">
+        <% if (error && hasAccount) { %>
+          <p class="error">
           <%= error %>
-        </p>
-    <% } %>
-    
-  </form>
-</div>
+          </p>
+        <% } %>
 
-<div class="form-container">
-  <p class="blue title">Inscription</p>
-  <form class="form" action="/register" method="POST">
-    <div class="input-group">
-      <label>Nom d'utilisateur</label>
-      <input type="text" name="username" id="username" required>
+      </form>
     </div>
-    <div class="input-group">
-      <label>Adresse e-mail</label>
-      <input type="email" name="email" id="email" required>
-    </div>
-    <div class="input-group">
-      <label>Mot de passe</label>
-      <input type="password" name="password" id="password" required>
-    </div>
-    <button class="sign" type="submit"><span>S'inscrire</span></button>
-    <% if (error && !hasAccount) { %>
-      <p class="error">
-        <%= error %>
-      </p>
-    <% } %>
-  </form>
-</div>
 
-</div>
+    <div class="form-container">
+      <p class="blue title">Inscription</p>
+      <form class="form" action="/register" method="POST">
+        <div class="input-group">
+          <label>Nom d'utilisateur</label>
+          <input type="text" name="username" id="username" required>
+        </div>
+        <div class="input-group">
+          <label>Adresse e-mail</label>
+          <input type="email" name="email" id="email" required>
+        </div>
+        <div class="input-group">
+          <label>Mot de passe</label>
+          <input type="password" name="password" id="password" required>
+        </div>
+        <button class="sign" type="submit"><span>S'inscrire</span></button>
+        <% if (error && !hasAccount) { %>
+          <p class="error">
+          <%= error %>
+          </p>
+        <% } %>
+      </form>
+    </div>
+
+  </div>
 
 </body>
 

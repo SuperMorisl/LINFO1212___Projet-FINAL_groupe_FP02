@@ -5,12 +5,94 @@
     <meta charset="utf-8" />
     <title>C'est tourné ! - Ajouter une oevre</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="/script.js" defer></script>
+    <script src="/add.js" defer></script>
     <link rel="icon" href="image/logo.png">
     <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
+    <nav>
+    <div class="icon">
+      <img src="image/logo.png">
+      <span class="blue">C'est tourné !</span>
+    </div>
+  </nav>
+
+  <div class="add-page">
+
+    <div class="form-container">
+      <div class="icon">
+        <img src="image/logo.png">
+        <p class="blue title">Ajouter une oeuvre</p>
+        </div>
+      <form class="form" action="/add" method="POST" enctype="multipart/form-data"> <!--Permet d'envoyer des images -->
+        <div class="input-group">
+          <label>Titre</label>
+          <input type="text" name="title" id="title" required>
+        </div>
+        <div class="input-group">
+          <label>Type</label>
+
+           <div class="type-container">
+                <div class="type-chip" data-value="Film">Film</div>
+                <div class="type-chip" data-value="Série">Série</div>
+            </div>
+
+          <input type="hidden" name="type" id="type" required>
+        </div>
+        <div class="input-group">
+            <label>Description</label>
+            <input type="text" name="description" id="description" required>
+        </div>
+        <div class="input-group">
+            <label>Genre(s)</label>
+        
+            <div class="genre-container">
+                <div class="genre-chip" data-value="Action">Action</div>
+                <div class="genre-chip" data-value="Aventure">Aventure</div>
+                <div class="genre-chip" data-value="Comédie">Comédie</div>
+                <div class="genre-chip" data-value="Drame">Drame</div>
+                <div class="genre-chip" data-value="Science-Fiction">Science-fiction</div>
+                <div class="genre-chip" data-value="Horreur">Horreur</div>
+                <div class="genre-chip" data-value="Thriller">Thriller</div>
+                <div class="genre-chip" data-value="Romance">Romance</div>
+                <div class="genre-chip" data-value="Fantaisie">Fantaisie</div>
+                <div class="genre-chip" data-value="Crime">Crime</div>
+                <div class="genre-chip" data-value="Histoire">Histoire</div>
+                <div class="genre-chip" data-value="Mystère">Mystère</div>
+                <div class="genre-chip" data-value="Comédie Noire">Comédie noire</div>
+                <div class="genre-chip" data-value="Biographie">Biographie</div>
+            </div>
+        
+            <input type="hidden" name="genres" id="genres" required>
+        </div>
+        <div class="input-group">
+            <label>Date de sortie</label>
+            <input type="date" name="date" id="date" required>
+        </div>
+        <div class="input-group">
+          <label>Image de l'oeuvre</label>
+          <input type="file" name="image" id="image" required>
+        </div>
+        <div class="input-group">
+          <label>Réalisateur(s)</label>
+          <input type="text" name="author" id="author" required>
+        </div>
+        <div class="ensemble">
+            <button class="sign white" onclick="window.location.href='/'"><span>Annuler</span></button>
+            <button class="sign" type="submit"><span>Ajouter l'oeuvre</span></button>
+        </div>
+
+        <% if (error && hasAccount) { %>
+          <p class="error">
+          <%= error %>
+          </p>
+        <% } %>
+      </form>
+      
+    </div>
+  </div>
+
 </body>
 
 </html>
