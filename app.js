@@ -79,6 +79,9 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
     if (series.length === 0 && movies.length === 0) { // si aucun résultat n'a été trouvé dans la db
       res.render('index', {
         username : req.session.username,
+        userDate: req.session.date,
+        userXp: req.session.xp,
+        userLevel: req.session.xp, // c'est temporaire en attendant de gérer les niveaux
         movies: movies,
         series: series,
         allMovies: allMovies,
@@ -91,6 +94,9 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
     else {
       res.render('index', {
         username: req.session.username,
+        userDate: req.session.date,
+        userXp: req.session.xp,
+        userLevel: req.session.xp,
         movies: movies,
         series: series,
         allMovies: allMovies,
@@ -137,7 +143,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.post('/register', async function (req, res) { // séparer login et register en deux fichiers .ejs différents ??? Non pas besoin
+app.post('/register', async function (req, res) { 
   try {
     const user = await usersCollection.findOne({ username: req.body.username });
     if (user) { // si l'utilisateur a déjà un compte
@@ -162,10 +168,13 @@ app.post('/register', async function (req, res) { // séparer login et register 
       const newUser = { "username": req.body.username, "password": req.body.password, "email": req.body.email, "creation" : creation_date, "xp" : 0};
       await usersCollection.insertOne(newUser);
       console.log("Nouvel utilisateur ajouté à la base de données :", req.body.username);
-      req.session.username = req.body.username;
-      req.session.date = actualUser.creation;
-      req.session.xp = actualUser.xp;
+      req.session.username = newUser.username;
+      req.session.date = newUser.creation;
+      req.session.xp = newUser.xp;
       res.redirect('/'); 
+    }
+    else { // si tous les champs ne sont pas complétés
+      return res.render('login', { error: "Veuillez remplir tous les champs", hasAccount: false });
     }
   }
   catch (err) {

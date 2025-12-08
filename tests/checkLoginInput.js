@@ -11,7 +11,7 @@ const checkLoginInput = {
 
     isValidPassword : function(input) {
 
-        const minLength = 12;
+        const minLength = 10;
         const maxLength = 30;
         return input.length >= minLength && input.length <= maxLength 
         && /[A-Z]/.test(input) // Le mot de passe contient au moins une majuscule 
