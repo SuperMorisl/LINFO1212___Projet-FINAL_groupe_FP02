@@ -78,16 +78,16 @@
           <label>Réalisateur(s)</label>
           <input type="text" name="author" id="author" required>
         </div>
-        <div class="ensemble">
-            <button class="sign white" onclick="window.location.href='/'"><span>Annuler</span></button>
+        <% if (error) { %>
+          <p class="error">
+            <%= error %>
+          </p>
+        <% } %>
+        <div class="double-boutons">
+            <button class="sign white" onclick=goMainPage()><span>Annuler</span></button>
             <button class="sign" type="submit"><span>Ajouter l'oeuvre</span></button>
         </div>
 
-        <% if (error && hasAccount) { %>
-          <p class="error">
-          <%= error %>
-          </p>
-        <% } %>
       </form>
       
     </div>

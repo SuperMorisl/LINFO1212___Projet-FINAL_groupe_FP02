@@ -1,3 +1,31 @@
+// -----------------------------------
+// | Comportement de la pop up DEBUT |
+// -----------------------------------
+
+function openPopup() {
+  document.getElementById("popUp").style.display = "block";
+}
+
+function closePopup() {
+  document.getElementById("popUp").style.display = "none";
+}
+
+// ---------------------------------
+// | Comportement de la pop up FIN |
+// ---------------------------------
+
+// --------------------------------------------
+// | Comportement de lien vers l'oeuvre DEBUT |
+// --------------------------------------------
+
+function seeArtwork(title) {
+    window.location.href = "/" + encodeURIComponent(title); // On encode car on peut pas mettre /, ?, # ou & dans le nom de notre url
+}
+
+// ------------------------------------------
+// | Comportement de lien vers l'oeuvre FIN |
+// ------------------------------------------
+
 // -------------------------------------
 // | Comportement du burger-menu DEBUT |
 // -------------------------------------

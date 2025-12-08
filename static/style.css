@@ -82,7 +82,45 @@ nav .actions,
     background-repeat: no-repeat;
     background-position: center;
     aspect-ratio: 1; /* width / height = 1 */
+    cursor: pointer;
 }
+
+/* Style de la pop up - DEBUT */
+
+div.popup {
+    display: none; /* Cachée par défaut mais modifiable dans le js static */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centre la popUp en + de top et left */
+    overflow-y: auto; /* permet de scroller */
+
+    width: 70%;
+    max-height: 80vh;
+    padding: 3rem;
+    z-index: 100; /* Juste pour dire qu'il s'affiche à l'avant plan*/
+
+    background: #1E2939;
+    border: 2px solid #0F1727;
+    border-radius: 15px;
+}
+
+button.popUp {
+    margin-left: 2%;
+}
+
+button.close-btn {
+    position: relative;
+    background-color: #155DFC;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Style de la pop up - FIN */
 
 /* Style de la barre de recherce - DEBUT */
 
@@ -515,7 +553,9 @@ span.grey {
 }
 
 .sign span,
-.ajouter span {
+.ajouter span,
+.close-btn span,
+.white span {
     position: relative;
     z-index: 2;
     transition: color 0.4s ease;
@@ -544,7 +584,8 @@ span.grey {
 .sign::before,
 .form-container::before,
 .ajouter::before,
-.connecter::before {
+.connecter::before,
+.close-btn::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -563,7 +604,8 @@ span.grey {
 .sign:hover::before,
 .form-container:hover::before,
 .ajouter:hover::before,
-.connecter:hover::before  {
+.connecter:hover::before,
+.close-btn:hover::before  {
   background: linear-gradient(90deg, #2a7cf8ce, #6d4cffc8);
   filter: blur(1.2em);
 }
@@ -573,17 +615,24 @@ span.grey {
 }
 
 .ajouter:hover::before,
-.connecter:hover::before {
+.connecter:hover::before,
+.close-btn:hover::before {
     filter: blur(0.3em)
 }
 
-.connecter:hover::before {
+.connecter:hover::before,
+.white:hover::before {
     background: linear-gradient(90deg, #ffffff54, #f9f7ff4a);
 }
 
 .sign:hover span,
-.ajouter:hover span {
+.ajouter:hover span,
+.close-btn:hover span {
     color: rgba(255, 255, 255, 0.844);
+}
+
+.white:hover span {
+    color: #686c73;
 }
 
 .sign:active::before {
@@ -600,6 +649,7 @@ span.grey {
 }
 
 .white {
+    position: relative;
     background-color: white;
 }
 
@@ -624,6 +674,26 @@ span.grey {
 
 .genre-chip.selected, .type-chip.selected {
   background-color: #155DFC;
+}
+
+input[type="date"],
+input[type="file"] { /* Ils sont pas centré verticalement de base... Donc on le fait ici */
+    padding: 0.5rem 1rem;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.double-boutons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.double-boutons .sign {
+    max-width: 10rem;
+    width: 45%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.2rem;
 }
 
 

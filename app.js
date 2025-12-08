@@ -36,8 +36,19 @@ app.get('/', async function (req, res) {
     const allMovies = await dbModule.getMovies(); //renvoi des films et séries dans la page d'accueil
     const allSeries = await dbModule.getSeries();
     const allGenres = await dbModule.getGenres();
+    let userLevel = 1;
+    let xp = req.session.xp;
+
+    while (xp && xp >= 100) { // xp = undefined -> false
+        userLevel++;
+        xp -= 100;
+    }
+  
     res.render('index', {
       username: req.session.username,
+      userDate: req.session.date,
+      userXp: xp,
+      userLevel: userLevel,
       movies: allMovies,
       series: allSeries, 
       allMovies: allMovies,
@@ -110,6 +121,8 @@ app.post('/login', async (req, res) => {
     const actualUser = await usersCollection.findOne({ username: req.body.username }); // On réccupère l'utilisateur s'il existe dans la db
     if (actualUser && req.body.password == actualUser.password) { // Vérification de si l'utilisateur existe dans db
       req.session.username = req.body.username;   // Stocke le username dans la session
+      req.session.date = actualUser.creation;
+      req.session.xp = actualUser.xp;
       res.redirect('/');
     }
     else if (!actualUser) {
@@ -150,6 +163,8 @@ app.post('/register', async function (req, res) { // séparer login et register 
       await usersCollection.insertOne(newUser);
       console.log("Nouvel utilisateur ajouté à la base de données :", req.body.username);
       req.session.username = req.body.username;
+      req.session.date = actualUser.creation;
+      req.session.xp = actualUser.xp;
       res.redirect('/'); 
     }
   }
@@ -197,6 +212,29 @@ app.get('/add', function (req, res) {
     //res.redirect("/");
  //}
 //});
+
+app.get('/:title', async (req, res) => {
+  const title = decodeURIComponent(req.params.title); // (Voir index.js 2e section)
+
+  const allSeries = await dbModule.getSeries();
+  const allMovies = await dbModule.getMovies();
+
+  const movie = allMovies.find(m => m.title === title);
+  const serie = allSeries.find(s => s.title === title)
+
+  if (!movie && !serie) {
+    return res.status(404).send("Film introuvable");
+  }
+
+  else if (movie) {
+    res.render('oeuvre', { oeuvre : movie });
+  }
+
+  else {
+    res.render ('oeuvre', { oeuvre : serie })
+  }
+});
+
 
 //--------------------------------------------------------------------------------------------------------------------------------------
 

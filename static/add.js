@@ -50,6 +50,11 @@ genreChips.forEach(chip => {
 // | Comportement des choix de genre FIN |
 // ---------------------------------------
 
+// Pour retourner à la page d'acceuil :
+function goMainPage() {
+    window.location.href='/'
+}
+
 // Verifie qu'on a bien séléctionné un type et au moins un genre car les attributs hiddens échappent à required
 
 const form = document.querySelector('.form');

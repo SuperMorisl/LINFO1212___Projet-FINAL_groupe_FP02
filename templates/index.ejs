@@ -42,9 +42,21 @@
             <a href="/add">
                 <div class="ajouter"><span>+</span><span>Ajouter</span></div>
             </a>
-            <a href="/login">
-                <div class="connecter"></div>
-            </a>
+            <% if (username) { %>
+                <div class="connecter" onclick="openPopup()"></div>
+                <div class="popup" id="popUp">
+                    <h1><%= username %></h1>
+                    <h2>Membre depuis <%= userDate %></h2>
+                    <h2>Niveau <%= userLevel %></h2>
+                    <h3>XP : <%= userXp %></h3>
+                    
+                    <button class="close-btn" onclick="closePopup()"><span>X</span></button>
+                </div>
+            <% } else { %>
+                <a href="/login">
+                    <div class="connecter"></div>
+                </a>
+            <% } %>
         </div>
 
 
@@ -146,24 +158,27 @@
         </div>
     </div>
 
-    <div class="oeuvres">
-        <div class="oeuvre">
-            <img src="image/inception.jpeg">
-            <div class="type">Film</div>
-        </div>
-        <div class="oeuvre">
-            <img src="image/you.png">
-            <div class="type">Série</div>
-        </div>
-        <div class="oeuvre">
-            <img src="image/regression.png">
-            <div class="type">Film</div>
-        </div>
-        <div class="oeuvre">
-            <img src="image/orgueil_et_prejuges.png">
-            <div class="type">Film</div>
-        </div>
-    </div>
+<div class="oeuvres">
+    <% let i=0; 
+    let j=0; 
+    while (i < allMovies.length || j < allSeries.length) { %>
+        <% if (i < allMovies.length) { %>
+            <div class="oeuvre" onclick="seeArtwork('<%= allMovies[i].title %>')">
+                <img src="image/<%= allMovies[i].image %>">
+                <div class="type">Film</div>
+            </div>
+        <% i++; } %>
+
+        <% if (j < allSeries.length) { %>
+            <div class="oeuvre" onclick="seeArtwork('<%= allSeries[j].title %>')">
+                <img src="image/<%= allSeries[j].image %>">
+                <div class="type">Série</div>
+            </div>
+        <% j++; } %>
+    <% } %>
+</div>
+
+
 </body>
 
 </html>
