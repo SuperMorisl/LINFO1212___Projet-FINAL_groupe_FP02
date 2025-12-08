@@ -112,6 +112,9 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
   }
 });
 
+// Fonction pour le filtre de la page index.ejs
+
+
 //------------------------------------------------------------------
 app.get('/login', (req, res) => {
   if (req.session.username) { // si l'utilisateur est déjà connecté

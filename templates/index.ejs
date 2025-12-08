@@ -123,13 +123,19 @@
         </div>
     </div>
 
+    <form id="filterForm" action="/filter" method="POST">         <!-- Pour le back-end -->
+    <input type="hidden" name="type" id="filterType" value="tous">
+    <input type="hidden" name="genre" id="filterGenre" value="tous-les-genres">
+    <input type="hidden" name="popularity" id="filterPopularity" value="peu-importe">
+    </form>
+
     <div class="filter-container">
         <div class="icon">
             <img src="image/filter.png">
             <span>Filtres :</span>
         </div>
     
-        <div class="filter">
+        <div class="filter" data-input="filterType">
             <div class="selected">Tous<span class="arrow">▼</span></div>
             <div class="options">
                 <div data-value="tous">Tous</div>
@@ -138,7 +144,7 @@
             </div>
         </div>
 
-        <div class="filter">
+        <div class="filter" data-input="filterGenre">
             <div class="selected">Tous les genres<span class="arrow">▼</span></div>
             <div class="options">
                 <div data-value="tous-les-genres">Tous les genres</div>
@@ -148,7 +154,7 @@
             </div>
         </div>
 
-        <div class="filter">
+        <div class="filter" data-input="filterPopularity">
             <div class="selected">Popularité<span class="arrow">▼</span></div>
             <div class="options">
                 <div data-value="plus-populaire">Plus populaire</div>
