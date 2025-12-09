@@ -54,6 +54,11 @@ app.get('/', async function (req, res) {
       allMovies: allMovies,
       allSeries: allSeries,
       genres: allGenres,
+      selectedFilters: {
+      type: "tous",
+      genre: "tous-les-genres",
+      popularity: "peu-importe"
+      },
       error: null
     });
   } catch (err) {
@@ -87,6 +92,11 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
         allMovies: allMovies,
         allSeries: allSeries,
         genres: allGenres,
+        selectedFilters: {
+        type: "tous",
+        genre: "tous-les-genres",
+        popularity: "peu-importe"
+        },
         error: "Aucune oeuvre portant ce titre n'a été trouvée."
       });
     }
@@ -102,6 +112,11 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
         allMovies: allMovies,
         allSeries: allSeries,
         genres: allGenres,
+        selectedFilters: {
+        type: "tous",
+        genre: "tous-les-genres",
+        popularity: "peu-importe"
+        },
         error: null
       });
     }
@@ -113,30 +128,66 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
 });
 
 // Fonction pour le filtre de la page index.ejs
-app.post('/filter', async function (req, res) { 
-
-  //const type = req.body.type; ------------> il faut gérer la réccupération des input de l'utilisateur via le javascript
-  //const genre = req.body.genre;
-  //const popularity = req.body.popularity;
+app.post('/filter', async function (req, res) { // ------------------------------------> il y a un bug au niveau de l'affichage des filtres à cause du .submit() dans le javascript 
+                                                //                                       il va être réglé avec l'affichage des filtres choisit sur le ejs
+  // on réccupère les inputs de l'utilisateur grâce dans le javascript
+  const type = req.body.type;           // "tous", "films", "series"
+  const genre = req.body.genre;         // "tous-les-genres" ou ....
+  const popularity = req.body.popularity; // "plus-populaire", "moins-populaire", "peu-importe"
 
   const allMovies = await dbModule.getMovies(); 
   const allSeries = await dbModule.getSeries();
   const allGenres = await dbModule.getGenres();
 
+  let filteredMovies = allMovies;
+  let filteredSeries = allSeries;
+
+  // filtre en fonction du type : film ou série
+  if (type === "films") {
+    filteredSeries = [];   // on retire les séries
+  }
+  else if (type === "series") {
+    filteredMovies = [];   // on retire les films
+  }
+
+  // filtre en fonction du genre
+  if (genre !== "tous-les-genres") {
+    filteredMovies = filteredMovies.filter(m => m.genre.includes(genre));
+    filteredSeries = filteredSeries.filter(s => s.genre.includes(genre));
+  }
+
+  // filtre en fonction de la popularité
+  if (popularity === "plus-populaire") {
+    filteredMovies.sort((a, b) => b.averageRating - a.averageRating); // on trie en fonction de l'avis général pour l'oeuvre
+    filteredSeries.sort((a, b) => b.averageRating - a.averageRating);
+  }
+  else if (popularity === "moins-populaire") {
+    filteredMovies.sort((a, b) => a.averageRating - b.averageRating);
+    filteredSeries.sort((a, b) => a.averageRating - b.averageRating);
+  }
+
+  //console.log(filteredMovies); ---------------------------------------> juste pour vérifier que ça fonctionne bien 
+  //console.log(filteredSeries);
   res.render('index', {
-        username: req.session.username,
-        userDate: req.session.date,
-        userXp: req.session.xp,
-        userLevel: req.session.xp,
-        movies: allMovies,
-        series: allSeries,
-        allMovies: allMovies,
-        allSeries: allSeries,
-        genres: allGenres,
-        error: null
-      });
+    username: req.session.username,
+    userDate: req.session.date,
+    userXp: req.session.xp,
+    userLevel: req.session.xp, 
+    movies: filteredMovies,
+    series: filteredSeries,
+    allMovies: allMovies,
+    allSeries: allSeries,
+    genres: allGenres,
+    selectedFilters: {          
+      type,
+      genre,
+      popularity
+    },
+    error: null
+  });
 
 });
+
 
 //------------------------------------------------------------------
 app.get('/login', (req, res) => {
@@ -229,14 +280,14 @@ app.post('/add', async function (req, res) {
     else if (!checkAddInput.isValidDescription(req.body.description)){
       res.render('add', { username: req.session.username, error: "Description invalide"})
     } 
-    // il faudra rajouter un checkInput pour vérifier le type de l'image : termine par .png, ...
+    // il faudra rajouter un checkInput pour vérifier que le type de l'image se termine bien par .png, ...
     else {    
-      if (req.body.title.trim() && req.body.type && req.body.description.trim() && req.body.genres.split(',').length > 0 && req.body.date) {
+      if (req.body.title.trim() && req.body.type && req.body.description.trim() && req.body.genres.split(',').length > 0 && req.body.date) { // les champs obligatoires
         const title = req.body.title;
         const description = req.body.description;
-        const genres = req.body.genres.split(','); // on réccupère les genres sur le javascript
+        const genres = req.body.genres.split(','); // on réccupère les genres avec le javascript
         const date = req.body.date;
-        const image = null; // il faut gérer comment accéder à l'image
+        const image = null; // il faut gérer comment accéder à l'image *****
         const author = req.body.author; 
       
         const newWork = {"title": title, "date": date, "author": author, "description": description, "genre": genres, "image": image, "averageRating" : 0, "reviews": []};

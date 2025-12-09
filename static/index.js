@@ -112,3 +112,20 @@ document.querySelectorAll('.filter').forEach(filtre => {
 // ------------------------------
 // | Comportement du filtre FIN |
 // ------------------------------
+
+// partie pour le filtre de la page index.ejs
+document.querySelectorAll('.filter').forEach(filtre => {
+    const options = filtre.querySelector('.options');
+
+    // quand on clique sur une option 
+    options.querySelectorAll('div').forEach(option => {
+        option.addEventListener('click', () => {
+            // mets à jour le choix dans le ejs
+            const inputId = filtre.dataset.input;
+            document.getElementById(inputId).value = option.dataset.value;
+
+            // soumettre au FORM (back) les choix de l'utilisateur
+            document.getElementById('filterForm').submit();
+        });
+    });
+});
