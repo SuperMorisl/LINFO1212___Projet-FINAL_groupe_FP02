@@ -8,19 +8,8 @@ const multer = require("multer"); // permet de gérer les fichiers envoyés par 
 const path = require("path");
 
 // configuration de multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join("static", "image")); // le dossier dans lequel les images vont être stockées
-  },
-  filename: (req, file, cb) => { // le nom du fichier choisit par l'utilisateur 
-    const name = path.parse(file.originalname).name; // le nom choisit
-    const ext = path.extname(file.originalname); // un "identifiant" qui se rajoute à la fin du nom pour éviter d' "écraser" des fichiers qui ont le même nom
-    cb(null, `${name}-${Date.now()}${ext}`);
-  }
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
 
 const checkLoginInput = require('./tests/checkLoginInput');
 const checkAddInput = require('./tests/checkAddInput');
@@ -300,17 +289,21 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
     else if (!checkAddInput.isValidDescription(req.body.description)){
       return res.render('add', { username: req.session.username, error: "Description invalide"});
     } 
-    // il faudra rajouter un checkInput pour vérifier que le type de l'image se termine bien par .png, ...
+    else if (!checkAddInput.isValidImage(req.file.originalname)) {
+      return res.render('add', { username: req.session.username, error: "Image invalide"});
+    }
     else {    
       if (req.body.title.trim() && req.body.type && req.body.description.trim() && req.body.genres.split(',').length > 0 && req.body.date && req.file && req.body.author.trim()) { // les champs obligatoires
-        const title = req.body.title;
-        const description = req.body.description;
+        
+        // on stocke seulement l'image si tous les champs sont remplis
+        const extension = path.extname(req.file.originalname);
+        const imageName = Date.now() + extension; // nom original choisit par l'utilisateur + "identifiant" pour éviter d'écraser les fichiers avec le même nom
+        fs.writeFileSync(path.join("static", "image", imageName), req.file.buffer); // buffer est utilisé pour sauvegarder le fichier seulement si tous les champs sont valides
+
         const genres = req.body.genres.split(','); // on réccupère les genres avec le javascript
-        const date = req.body.date;
-        const image = req.file.filename; // format : image.png
-        const author = req.body.author; 
-      
-        const newWork = {"title": title, "date": date, "author": author, "description": description, "genre": genres, "image": image, "averageRating" : 0, "reviews": []};
+        const image = imageName; // format : image.png
+
+        const newWork = {"title": req.body.title, "date": req.body.date, "author": req.body.author, "description": req.body.description, "genre": genres, "image": image, "averageRating" : 0, "reviews": []};
     
         const type = req.body.type; // pour voir dans quelle collection ajouter l'oeuvre
         if (type === "Film") {
