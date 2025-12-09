@@ -12,6 +12,7 @@ let trophiesCollection = null;
 
 //remplit la db si la collection est vide 
 async function seedCollection(collection, filePath) {
+  console.log(`Tentative de lecture du fichier : ${path.resolve(filePath)}`);
   const count = await collection.countDocuments();
   if (count === 0) {
     const dataRaw = fs.readFileSync(filePath, 'utf8').trim();  //parcourt le json 
@@ -64,17 +65,31 @@ async function getTrophies() {
 async function getGenres() {
   const movies = await getMovies();
   const series = await getSeries();
-
+  let movieGenre = null;
+  let serieGenre = null;
   const genres = new Set();
 
+  //récupération des genres de films
+
   for (const movie of movies) {
-    for (const genre of movie.genre) {
+    if (!Array.isArray(movie.genre)){      //on vérifie que les genres sont bien sous forme d'array
+       movieGenre = [movie.genre]
+    }else{ movieGenre =movie.genre}    
+    
+    for (const genre of movieGenre) {
       genres.add(genre)
     }
   }
 
+
+//récupération des genres de séries 
+
   for (const serie of series) {
-    for (const genre of serie.genre) {
+    if (!Array.isArray(serie.genre)){     //on vérifie que les genre sont bien sous forme d'array 
+       serieGenre = [serie.genre]
+    }else{ serieGenre =serie.genre}
+    
+    for (const genre of serieGenre) {
       genres.add(genre)
     }
   }

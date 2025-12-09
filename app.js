@@ -71,6 +71,7 @@ app.get('/', async function (req, res) {
       error: null
     });
   } catch (err) {
+    console.error("ERREUR DÉTAILLÉE DANS LA ROUTE / :", err); // ⬅️ AFFICHEZ L'ERREUR COMPLÈTE
     res.status(500).send("Problème avec la récupération des données dans la db");
   }
 });
@@ -352,17 +353,21 @@ app.get('/:title', async (req, res) => {
 async function startServer(test) {
   try {
     const db = await dbModule.initDB();
+
     moviesCollection = db.moviesCollection;
     seriesCollection = db.seriesCollection;
     usersCollection = db.usersCollection;
     trophiesCollection = db.trophiesCollection;
+
     if (!test) { // Cela évite d'interférer avec les SuperTests
       app.listen(3000);            // Puis on démarre le serveur
       console.log("Serveur démarré sur http://localhost:3000");
     }
+
     return {moviesCollection, seriesCollection}
   } catch (err) {
     console.error("Erreur lors de l'initialisation de MongoDB... :", err);
+    process.exit(1);
   }
 }
 
