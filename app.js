@@ -137,8 +137,8 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
 });
 
 // Fonction pour le filtre de la page index.ejs
-app.post('/filter', async function (req, res) { // ------------------------------------> il y a un bug au niveau de l'affichage des filtres à cause du .submit() dans le javascript 
-                                                //                                       il va être réglé avec l'affichage des filtres choisit sur le ejs
+app.post('/filter', async function (req, res) { // ------------------------------------> il y a un bug au niveau de l'affichage (dans le .ejs) des filtres 
+                                                //                                       il va être réglé en affichant les données filtées du back, mais ça ne vient pas du javascript
   // on réccupère les inputs de l'utilisateur grâce dans le javascript
   const type = req.body.type;           // "tous", "films", "series"
   const genre = req.body.genre;         // "tous-les-genres" ou ....
