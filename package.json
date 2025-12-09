@@ -30,6 +30,7 @@
     "express-session": "^1.18.2",
     "jest": "^30.2.0",
     "mongodb": "^6.20.0",
+    "multer": "^2.0.2",
     "supertest": "^7.1.4"
   },
   "keywords": []

@@ -3,6 +3,25 @@ var session = require('express-session');
 var app = express();
 var bodyParser = require("body-parser");
 
+
+const multer = require("multer"); // permet de gérer les fichiers envoyés par un FORM --> stockage
+const path = require("path");
+
+// configuration de multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join("static", "image")); // le dossier dans lequel les images vont être stockées
+  },
+  filename: (req, file, cb) => { // le nom du fichier choisit par l'utilisateur 
+    const name = path.parse(file.originalname).name; // le nom choisit
+    const ext = path.extname(file.originalname); // un "identifiant" qui se rajoute à la fin du nom pour éviter d' "écraser" des fichiers qui ont le même nom
+    cb(null, `${name}-${Date.now()}${ext}`);
+  }
+});
+
+const upload = multer({ storage });
+
+
 const checkLoginInput = require('./tests/checkLoginInput');
 const checkAddInput = require('./tests/checkAddInput');
 
@@ -26,6 +45,7 @@ app.use(express.static('static'));  // Utilise les fichiers de front-end du doss
 app.set('views', 'templates'); // Les fichiers html/ejs sont dans templates
 app.set('view engine', 'ejs'); // On utilise ejs comme moteur de vue
 app.use(bodyParser.urlencoded({ extended: true })); // Permet de recupérer les éléments obtenus par la méthode POST
+
 
 
 //--------------------------------------------------- LES ROUTES ----------------------------------------------------------------------
@@ -272,22 +292,22 @@ app.get('/add', function (req, res) {
 
 });
 
-app.post('/add', async function (req, res) {
+app.post('/add', upload.single("image"), async function (req, res) { // pour que multer reçoit l'image
   try {
     if (!checkAddInput.isValidTitle(req.body.title)) {
-      res.render('add', { username: req.session.username, error: "Titre invalide" })
+      return res.render('add', { username: req.session.username, error: "Titre invalide" });
     } 
     else if (!checkAddInput.isValidDescription(req.body.description)){
-      res.render('add', { username: req.session.username, error: "Description invalide"})
+      return res.render('add', { username: req.session.username, error: "Description invalide"});
     } 
     // il faudra rajouter un checkInput pour vérifier que le type de l'image se termine bien par .png, ...
     else {    
-      if (req.body.title.trim() && req.body.type && req.body.description.trim() && req.body.genres.split(',').length > 0 && req.body.date) { // les champs obligatoires
+      if (req.body.title.trim() && req.body.type && req.body.description.trim() && req.body.genres.split(',').length > 0 && req.body.date && req.file && req.body.author.trim()) { // les champs obligatoires
         const title = req.body.title;
         const description = req.body.description;
         const genres = req.body.genres.split(','); // on réccupère les genres avec le javascript
         const date = req.body.date;
-        const image = null; // il faut gérer comment accéder à l'image *****
+        const image = req.file.filename; // format : image.png
         const author = req.body.author; 
       
         const newWork = {"title": title, "date": date, "author": author, "description": description, "genre": genres, "image": image, "averageRating" : 0, "reviews": []};
@@ -299,11 +319,11 @@ app.post('/add', async function (req, res) {
         else if (type === "Série") {
           await seriesCollection.insertOne(newWork);
         }
-        console.log("Une nouvelle oeuvre a été ajouté à la base de données !");
+        console.log("Une nouvelle oeuvre a été ajoutée à la base de données : " + newWork.title);
         res.redirect("/");
     }
     else {
-      res.render('add', { username: req.session.username, error: "Veuillez remplir tous les champs obligatoires." })
+      res.render('add', { username: req.session.username, error: "Veuillez remplir tous les champs obligatoires." });
     }
   }
   }
