@@ -113,7 +113,30 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
 });
 
 // Fonction pour le filtre de la page index.ejs
+app.post('/filter', async function (req, res) { 
 
+  //const type = req.body.type; ------------> il faut gérer la réccupération des input de l'utilisateur via le javascript
+  //const genre = req.body.genre;
+  //const popularity = req.body.popularity;
+
+  const allMovies = await dbModule.getMovies(); 
+  const allSeries = await dbModule.getSeries();
+  const allGenres = await dbModule.getGenres();
+
+  res.render('index', {
+        username: req.session.username,
+        userDate: req.session.date,
+        userXp: req.session.xp,
+        userLevel: req.session.xp,
+        movies: allMovies,
+        series: allSeries,
+        allMovies: allMovies,
+        allSeries: allSeries,
+        genres: allGenres,
+        error: null
+      });
+
+});
 
 //------------------------------------------------------------------
 app.get('/login', (req, res) => {
@@ -198,32 +221,46 @@ app.get('/add', function (req, res) {
 
 });
 
-//app.post('/add', async function (req, res) { --------------------------------------> il faut rajouter les champs : title, author,... dans le fichier add.ejs pour que ça fonctionne
-  //if (!checkAddInput.isValidTitle(req.body.title)) {
-    //res.render('add', { username: req.session.username, error: "Titre invalide" })
-  //} 
-  //else if (!checkAddInput.isValidDescription(req.body.description)){
-    //res.render('add', { username: req.session.username, error: "Description invalide"})
-  //} 
-  //else {                  // rajouter les acteurs ???
-    //req.session.title = req.body.title;
-    //req.session.date = req.body.date;
-    //req.session.author = req.body.author;
-    //req.session.description = req.body.description;
-    //req.session.genre = req.body.genre;
-    //req.session.image = req.body.image;
-    //const newWork = {"title": req.session.title, "date": req.session.date, "author": req.session.author, "description": req.session.description, "genre": req.session.genre, "image": req.session.image};
-    //const type = req.body.type; // un film ou une serie
-    //if (type === "Film") {
-      //await moviesCollection.insertOne(newWork);
-    //} 
-    //else if (type === "Serie") {
-      //await seriesCollection.insertOne(newWork);
-    //}
-    //console.log("Une nouvelle oeuvre a été ajouté à la base de données !");
-    //res.redirect("/");
- //}
-//});
+app.post('/add', async function (req, res) {
+  try {
+    if (!checkAddInput.isValidTitle(req.body.title)) {
+      res.render('add', { username: req.session.username, error: "Titre invalide" })
+    } 
+    else if (!checkAddInput.isValidDescription(req.body.description)){
+      res.render('add', { username: req.session.username, error: "Description invalide"})
+    } 
+    // il faudra rajouter un checkInput pour vérifier le type de l'image : termine par .png, ...
+    else {    
+      if (req.body.title.trim() && req.body.type && req.body.description.trim() && req.body.genres.split(',').length > 0 && req.body.date) {
+        const title = req.body.title;
+        const description = req.body.description;
+        const genres = req.body.genres.split(','); // on réccupère les genres sur le javascript
+        const date = req.body.date;
+        const image = null; // il faut gérer comment accéder à l'image
+        const author = req.body.author; 
+      
+        const newWork = {"title": title, "date": date, "author": author, "description": description, "genre": genres, "image": image, "averageRating" : 0, "reviews": []};
+    
+        const type = req.body.type; // pour voir dans quelle collection ajouter l'oeuvre
+        if (type === "Film") {
+          await moviesCollection.insertOne(newWork);
+        } 
+        else if (type === "Série") {
+          await seriesCollection.insertOne(newWork);
+        }
+        console.log("Une nouvelle oeuvre a été ajouté à la base de données !");
+        res.redirect("/");
+    }
+    else {
+      res.render('add', { username: req.session.username, error: "Veuillez remplir tous les champs obligatoires." })
+    }
+  }
+  }
+  catch (err) {
+    res.status(500).send("Problème avec la récup des données dans la db");
+  }
+
+});
 
 app.get('/:title', async (req, res) => {
   const title = decodeURIComponent(req.params.title); // (Voir index.js 2e section)

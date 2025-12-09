@@ -74,3 +74,24 @@ form.addEventListener('submit', (e) => {
         return;
     }
 });
+
+// réccupération des genres
+const chips = document.querySelectorAll('.genre-chip');
+const genresInput = document.getElementById('genres');
+let selectedGenres = [];
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    const value = chip.dataset.value;
+
+    if (selectedGenres.includes(value)) {
+      selectedGenres = selectedGenres.filter(g => g !== value);
+    } else {
+      selectedGenres.push(value);
+    }
+
+    // on mets à jour le champ avec une chaine de caractères séparés par des virgules
+    genresInput.value = selectedGenres.join(','); 
+  });
+
+});
