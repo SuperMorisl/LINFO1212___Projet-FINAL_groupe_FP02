@@ -4,7 +4,7 @@ var app = express();
 var bodyParser = require("body-parser");
 
 
-const multer = require("multer"); // permet de gérer les fichiers envoyés par un FORM --> stockage
+const multer = require("multer"); // permet de gérer les fichiers envoyés par un FORM pour pouvoir les stocker
 const path = require("path");
 
 // configuration de multer
@@ -49,7 +49,7 @@ app.get('/', async function (req, res) {
     let xp = req.session.xp;
 
     while (xp && xp >= 100) { // xp = undefined -> false
-        userLevel++;
+        userLevel++;          // faire une fonction qui gère les niveaux
         xp -= 100;
     }
   
@@ -75,7 +75,7 @@ app.get('/', async function (req, res) {
   }
 });
 
-// Fonction pour la barre de recherche de la page index.ejs
+// Fonction pour la barre de recherche de la page index.ejs ---------------------------------------> elle affiche les résultats en dessous des filtres ????
 app.post('/search', async function (req, res) { // il peut y avoir plusieurs séries et films avec un même titre
   const title = req.body.search.trim(); // on réccupère le nom du film ou de la série
   if (!title || title === "") {
@@ -137,9 +137,8 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
 });
 
 // Fonction pour le filtre de la page index.ejs
-app.post('/filter', async function (req, res) { // ------------------------------------> il y a un bug au niveau de l'affichage (dans le .ejs) des filtres 
-                                                //                                       il va être réglé en affichant les données filtées du back, mais ça ne vient pas du javascript
-  // on réccupère les inputs de l'utilisateur grâce dans le javascript
+app.post('/filter', async function (req, res) {
+  // on réccupère les inputs de l'utilisateur dans le javascript
   const type = req.body.type;           // "tous", "films", "series"
   const genre = req.body.genre;         // "tous-les-genres" ou ....
   const popularity = req.body.popularity; // "plus-populaire", "moins-populaire", "peu-importe"
@@ -175,8 +174,6 @@ app.post('/filter', async function (req, res) { // -----------------------------
     filteredSeries.sort((a, b) => a.averageRating - b.averageRating);
   }
 
-  //console.log(filteredMovies); ---------------------------------------> juste pour vérifier que ça fonctionne bien 
-  //console.log(filteredSeries);
   res.render('index', {
     username: req.session.username,
     userDate: req.session.date,

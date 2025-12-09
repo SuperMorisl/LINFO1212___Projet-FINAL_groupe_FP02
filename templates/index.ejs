@@ -124,9 +124,9 @@
     </div>
 
     <form id="filterForm" action="/filter" method="POST">         <!-- Pour le back-end -->
-    <input type="hidden" name="type" id="filterType" value="tous">
-    <input type="hidden" name="genre" id="filterGenre" value="tous-les-genres">
-    <input type="hidden" name="popularity" id="filterPopularity" value="peu-importe">
+    <input type="hidden" name="type" id="filterType" value="<%= selectedFilters && selectedFilters.type ? selectedFilters.type : 'tous' %>">
+    <input type="hidden" name="genre" id="filterGenre" value="<%= selectedFilters && selectedFilters.genre ? selectedFilters.genre : 'tous-les-genres' %>">
+    <input type="hidden" name="popularity" id="filterPopularity" value="<%= selectedFilters && selectedFilters.popularity ? selectedFilters.popularity : 'peu-importe' %>">
     </form>
 
     <div class="filter-container">
@@ -136,7 +136,7 @@
         </div>
     
         <div class="filter" data-input="filterType">
-            <div class="selected">Tous<span class="arrow">▼</span></div>
+            <div class="selected"><% if (selectedFilters && selectedFilters.type === 'films') { %>Films<% } else if (selectedFilters && selectedFilters.type === 'series') { %>Séries<% } else { %>Tous<% } %><span class="arrow">▼</span></div>
             <div class="options">
                 <div data-value="tous">Tous</div>
                 <div data-value="films">Films</div>
@@ -145,7 +145,7 @@
         </div>
 
         <div class="filter" data-input="filterGenre">
-            <div class="selected">Tous les genres<span class="arrow">▼</span></div>
+            <div class="selected"><% if (selectedFilters && selectedFilters.genre && selectedFilters.genre !== 'tous-les-genres') { %><%= selectedFilters.genre %><% } else { %>Tous les genres<% } %><span class="arrow">▼</span></div>
             <div class="options">
                 <div data-value="tous-les-genres">Tous les genres</div>
                 <% genres.forEach(genre => { %>
@@ -155,7 +155,7 @@
         </div>
 
         <div class="filter" data-input="filterPopularity">
-            <div class="selected">Popularité<span class="arrow">▼</span></div>
+            <div class="selected"><% if (selectedFilters && selectedFilters.popularity === 'plus-populaire') { %>Plus populaire<% } else if (selectedFilters && selectedFilters.popularity === 'moins-populaire') { %>Moins populaire<% } else if (selectedFilters && selectedFilters.popularity === 'peu-importe') { %>Peu importe<% } else { %>Popularité<% } %><span class="arrow">▼</span></div>
             <div class="options">
                 <div data-value="plus-populaire">Plus populaire</div>
                 <div data-value="moins-populaire">Moins populaire</div>
@@ -167,17 +167,17 @@
 <div class="oeuvres">
     <% let i=0; 
     let j=0; 
-    while (i < allMovies.length || j < allSeries.length) { %>
-        <% if (i < allMovies.length) { %>
-            <div class="oeuvre" onclick="seeArtwork('<%= allMovies[i].title %>')">
-                <img src="image/<%= allMovies[i].image %>">
+    while (i < movies.length || j < series.length) { %>
+        <% if (i < movies.length) { %>
+            <div class="oeuvre" onclick="seeArtwork('<%= movies[i].title %>')">
+                <img src="image/<%= movies[i].image %>">
                 <div class="type">Film</div>
             </div>
         <% i++; } %>
 
-        <% if (j < allSeries.length) { %>
-            <div class="oeuvre" onclick="seeArtwork('<%= allSeries[j].title %>')">
-                <img src="image/<%= allSeries[j].image %>">
+        <% if (j < series.length) { %>
+            <div class="oeuvre" onclick="seeArtwork('<%= series[j].title %>')">
+                <img src="image/<%= series[j].image %>">
                 <div class="type">Série</div>
             </div>
         <% j++; } %>
