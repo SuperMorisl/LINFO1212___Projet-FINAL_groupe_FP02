@@ -1,7 +1,7 @@
-{"username" : "moimeme", "password" : "Motdepasse123456", "email" : "moimeme@gmail.com", "creation" : "octobre 2025", "xp" : 0}
-{"username" : "Sarah_123", "password" : "Secret12345", "email" : "sarah@hotmail.com", "creation" : "septembre 2025", "xp" : 0}
-{"username" : "Jean_Michel", "password" : "beauChat5674", "email" : "Jean_MichelMordant@gmail.com", "creation" : "decembre 2025", "xp" : 0}
-{"username" : "Linda", "password" : "monCodeSecret123", "email" : "Linda@outlook.com", "creation" : "aout 2025", "xp" : 0}
-{"username" : "Benedicte", "password" : "Benben1234678", "email" : "ben@gmail.com", "creation" : "avril 2025", "xp" : 0}
+{"username" : "moimeme", "password" : "Motdepasse123456", "email" : "moimeme@gmail.com", "creation" : "octobre 2025", "xp" : 0, "missions":{"publication":0, "commetaires":0,"visites":0},"trophies":[]}
+{"username" : "Sarah_123", "password" : "Secret12345", "email" : "sarah@hotmail.com", "creation" : "septembre 2025", "xp" : 0, "missions":{"publication":0, "commetaires":0,"visites":0},"trophies":[]}
+{"username" : "Jean_Michel", "password" : "beauChat5674", "email" : "Jean_MichelMordant@gmail.com", "creation" : "decembre 2025", "xp" : 0, "missions":{"publication":0, "commetaires":0,"visites":0},"trophies":[]}
+{"username" : "Linda", "password" : "monCodeSecret123", "email" : "Linda@outlook.com", "creation" : "aout 2025", "xp" : 0, "missions":{"publication":0, "commetaires":0,"visites":0},"trophies":[]}
+{"username" : "Benedicte", "password" : "Benben1234678", "email" : "ben@gmail.com", "creation" : "avril 2025", "xp" : 0, "missions":{"publication":0, "commetaires":0,"visites":0},"trophies":[]}
 
 // /!\ le mot de passe doit contenir au moins 1 maj, 1 min et 1 chiffre

@@ -6,6 +6,7 @@ var bodyParser = require("body-parser");
 
 const multer = require("multer"); // permet de gérer les fichiers envoyés par un FORM pour pouvoir les stocker
 const path = require("path");
+const fs = require("fs");  //permet d'interagir avec le serv (sauvegarder des images)
 
 // configuration de multer
 const storage = multer.memoryStorage();
@@ -36,6 +37,20 @@ app.set('view engine', 'ejs'); // On utilise ejs comme moteur de vue
 app.use(bodyParser.urlencoded({ extended: true })); // Permet de recupérer les éléments obtenus par la méthode POST
 
 
+//-------------------------------------------------CALCUL DE NIVEAU--------------------------------------------------------------------
+
+function get_level(userXp){
+  let level = 1;
+  let leftxp = userXp;
+  
+  while (leftxp>=20){
+    level++;
+    leftxp-=20;
+  }
+  return {level, leftxp}
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------- LES ROUTES ----------------------------------------------------------------------
 
@@ -223,11 +238,22 @@ app.get('/login', (req, res) => {
 
 app.post('/login', async (req, res) => {
   try {
+
+
     const actualUser = await usersCollection.findOne({ username: req.body.username }); // On réccupère l'utilisateur s'il existe dans la db
     if (actualUser && req.body.password == actualUser.password) { // Vérification de si l'utilisateur existe dans db
+      if (!actualUser.missions){
+        actualUser.missions = {"publication":0, "commentaires":0,"visites":0};
+      }
+      actualUser.missions.visites++;
+      await usersCollection.updateOne({username : req.session.username}, { $set : {missions: actualUser.missions}})
+
+
+      const { level, xpCurrent } = get_level(actualUser.xp); //calcul du niveau de l'utilisateur 
       req.session.username = req.body.username;   // Stocke le username dans la session
       req.session.date = actualUser.creation;
-      req.session.xp = actualUser.xp;
+      req.session.xp = xpCurrent;
+      req.session.userLevel = level;
       res.redirect('/');
     }
     else if (!actualUser) {
@@ -238,6 +264,7 @@ app.post('/login', async (req, res) => {
     }
   }
   catch (err) {
+    console.error("ERREUR DÉTAILLÉE DANS LA ROUTE /login :", err);
     res.status(500).send("Problème avec la récup des données dans la db");
   }
 });
@@ -269,7 +296,9 @@ app.post('/register', async function (req, res) {
       console.log("Nouvel utilisateur ajouté à la base de données :", req.body.username);
       req.session.username = newUser.username;
       req.session.date = newUser.creation;
-      req.session.xp = newUser.xp;
+      const { level, xpCurrent } = calculateLevel(newUser.xp); //calcul du niveau de l'utilisateur 
+      req.session.xp = xpCurrent;
+      req.session.userLevel = level;
       res.redirect('/'); 
     }
     else { // si tous les champs ne sont pas complétés
@@ -326,6 +355,39 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
           await seriesCollection.insertOne(newWork);
         }
         console.log("Une nouvelle oeuvre a été ajoutée à la base de données : " + newWork.title);
+        
+        //mise à jour des niveaux et trophés
+        const user = await usersCollection.findOne({ username: req.session.username });
+        
+        if (isNaN(user.xp)){
+          console.warn(`XP de l'utilisateur ${user.username} était invalide (${user.xp}). Réinitialisation à 0.`);
+          user.xp=0;
+        }
+
+        if (!user.missions){
+          user.missions = {"publication":0, "commentaires":0,"visites":0};
+        }
+        user.missions.publication += 1;
+        await usersCollection.updateOne({ username: req.session.username }, { $set: { missions: user.missions } });
+
+        if (!user.trophies) user.trophies = [];
+        //regarder les nouveaux trophés gagnés
+        const allTrophies = await trophiesCollection.find({category:"publication"}).toArray();
+        xpGained = 0;
+        for(const trophy of allTrophies){
+          if(user.missions.publication >= trophy.condition && !user.trophies.includes(trophy.id)){
+            xpGained += trophy.xp_reward;
+            user.trophies.push(trophy.id);
+            console.log(`TROPHÉE DÉBLOQUÉ pour ${user.username}: ${trophy.title}`);
+          }
+        }
+        const totalXP = user.xp + 10+ xpGained;
+        await usersCollection.updateOne({username: req.session.username}, {$set: {xp: totalXP, trophies:user.trophies}});
+        //calcul nouveau niveau
+        const {level, xpCurrent} = get_level(xpGained);
+        req.session.xp = xpCurrent;
+        req.session.userLevel = level;
+
         res.redirect("/");
     }
     else {
@@ -334,6 +396,7 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
   }
   }
   catch (err) {
+    console.error("ERREUR DÉTAILLÉE DANS LA ROUTE /add :", err);
     res.status(500).send("Problème avec la récup des données dans la db");
   }
 

@@ -87,6 +87,11 @@ async function getGenres() {
   return genres;
 }
 
+async function getUsers() {
+  return await getCollection(usersCollection);
+}
+
+
 
 module.exports = { 
   initDB,  
