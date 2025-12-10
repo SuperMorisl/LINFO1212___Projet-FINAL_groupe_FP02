@@ -141,7 +141,8 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
 app.post('/filter', async function (req, res) {
   // on réccupère les inputs de l'utilisateur dans le javascript
   const type = req.body.type;           // "tous", "films", "series"
-  const genre = req.body.genre;         // "tous-les-genres" ou ....
+  const genre = req.body.genre.toLowerCase();
+  console.log("Filtre utilisateur demandé:", genre);         // "tous-les-genres" ou ....
   const popularity = req.body.popularity; // "plus-populaire", "moins-populaire", "peu-importe"
 
   const allMovies = await dbModule.getMovies(); 
@@ -150,7 +151,7 @@ app.post('/filter', async function (req, res) {
 
   let filteredMovies = allMovies;
   let filteredSeries = allSeries;
-
+  const getRating = (item) => item.averageRating ?? 0;
   // filtre en fonction du type : film ou série
   if (type === "films") {
     filteredSeries = [];   // on retire les séries
@@ -161,20 +162,34 @@ app.post('/filter', async function (req, res) {
 
   // filtre en fonction du genre
   if (genre !== "tous-les-genres") {
-    filteredMovies = filteredMovies.filter(m => m.genre.includes(genre));
-    filteredSeries = filteredSeries.filter(s => s.genre.includes(genre));
+    const getLowercaseGenres = (oeuvre) =>{
+      let genres = oeuvre.genre;
+
+      if (!genres) return [];
+
+      if (typeof genres ==='string'){
+        genres = [genres];
+      }else if(!Array.isArray(genres)){
+        return [];
+      }return genres.filter(g => typeof g ==='string').map(g => g.trim().toLowerCase());}
+    filteredMovies = filteredMovies.filter( m=>  getLowercaseGenres(m).includes(genre));
+    filteredSeries = filteredSeries.filter( s=> getLowercaseGenres(s).includes(genre))
+
+
   }
 
   // filtre en fonction de la popularité
+// filtre en fonction de la popularité (CORRIGÉ)
   if (popularity === "plus-populaire") {
-    filteredMovies.sort((a, b) => b.averageRating - a.averageRating); // on trie en fonction de l'avis général pour l'oeuvre
-    filteredSeries.sort((a, b) => b.averageRating - a.averageRating);
+      // Tri décroissant, utilise getRating pour gérer les valeurs manquantes
+      filteredMovies.sort((a, b) => getRating(b) - getRating(a)); 
+      filteredSeries.sort((a, b) => getRating(b) - getRating(a));
   }
   else if (popularity === "moins-populaire") {
-    filteredMovies.sort((a, b) => a.averageRating - b.averageRating);
-    filteredSeries.sort((a, b) => a.averageRating - b.averageRating);
+      // Tri croissant
+      filteredMovies.sort((a, b) => getRating(a) - getRating(b));
+      filteredSeries.sort((a, b) => getRating(a) - getRating(b));
   }
-
   res.render('index', {
     username: req.session.username,
     userDate: req.session.date,
@@ -366,7 +381,7 @@ async function startServer(test) {
 
     return {moviesCollection, seriesCollection}
   } catch (err) {
-    console.error("Erreur lors de l'initialisation de MongoDB... :", err);
+    console.error("Erreur lors de l'initialisation de MongoDB... :", err);  //voir le type d'erreur exact 
     process.exit(1);
   }
 }

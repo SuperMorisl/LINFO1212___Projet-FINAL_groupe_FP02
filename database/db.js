@@ -65,36 +65,26 @@ async function getTrophies() {
 async function getGenres() {
   const movies = await getMovies();
   const series = await getSeries();
-  let movieGenre = null;
-  let serieGenre = null;
   const genres = new Set();
 
-  //récupération des genres de films
+  const processOeuvres = (oeuvres) => {
+    for (const oeuvre of oeuvres){
+      let currentGenres = oeuvre.genre;
 
-  for (const movie of movies) {
-    if (!Array.isArray(movie.genre)){      //on vérifie que les genres sont bien sous forme d'array
-       movieGenre = [movie.genre]
-    }else{ movieGenre =movie.genre}    
-    
-    for (const genre of movieGenre) {
-      genres.add(genre)
+      if(!Array.isArray(currentGenres)) {
+        currentGenres = [currentGenres];
+      }
+      for (const genre of currentGenres){
+        if (typeof genre == "string" && genre.trim().length>0){
+          genres.add(genre.trim().toLowerCase());
+        }
+      }
     }
-  }
+  };
+  processOeuvres(movies);
+  processOeuvres(series);
 
-
-//récupération des genres de séries 
-
-  for (const serie of series) {
-    if (!Array.isArray(serie.genre)){     //on vérifie que les genre sont bien sous forme d'array 
-       serieGenre = [serie.genre]
-    }else{ serieGenre =serie.genre}
-    
-    for (const genre of serieGenre) {
-      genres.add(genre)
-    }
-  }
-
-  return genres
+  return genres;
 }
 
 

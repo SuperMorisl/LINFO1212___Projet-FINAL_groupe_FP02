@@ -149,7 +149,7 @@
             <div class="options">
                 <div data-value="tous-les-genres">Tous les genres</div>
                 <% genres.forEach(genre => { %>
-                    <div data-value="<%= genre %>"><%= genre %></div>
+                    <div data-value="<%= genre %>"><%= genre.charAt(0).toUpperCase() + genre.slice(1) %></div>
                 <% }) %>
             </div>
         </div>
