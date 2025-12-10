@@ -47,7 +47,7 @@ function get_level(userXp){
     level++;
     leftxp-=20;
   }
-  return {level, leftxp}
+  return {level, leftxp};
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------
@@ -60,13 +60,9 @@ app.get('/', async function (req, res) {
     const allMovies = await dbModule.getMovies(); //renvoi des films et séries dans la page d'accueil
     const allSeries = await dbModule.getSeries();
     const allGenres = await dbModule.getGenres();
-    let userLevel = 1;
-    let xp = req.session.xp;
 
-    while (xp && xp >= 100) { // xp = undefined -> false
-        userLevel++;          // faire une fonction qui gère les niveaux
-        xp -= 100;
-    }
+    const xp = req.session.xp || 0;
+    const userLevel = req.session.userLevel || 1;
   
     res.render('index', {
       username: req.session.username,
@@ -111,8 +107,7 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
         username : req.session.username,
         userDate: req.session.date,
         userXp: req.session.xp,
-        userLevel: req.session.xp, // c'est temporaire en attendant de gérer les niveaux
-        movies: movies,
+        userLevel: req.session.userLevel, 
         series: series,
         allMovies: allMovies,
         allSeries: allSeries,
@@ -131,7 +126,7 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
         username: req.session.username,
         userDate: req.session.date,
         userXp: req.session.xp,
-        userLevel: req.session.xp,
+        userLevel: req.session.userLevel,
         movies: movies,
         series: series,
         allMovies: allMovies,
@@ -246,13 +241,13 @@ app.post('/login', async (req, res) => {
         actualUser.missions = {"publication":0, "commentaires":0,"visites":0};
       }
       actualUser.missions.visites++;
-      await usersCollection.updateOne({username : req.session.username}, { $set : {missions: actualUser.missions}})
+      req.session.username = req.body.username;         // Stocke le username dans la session
+      await usersCollection.updateOne({username : req.session.username}, { $set : {missions: actualUser.missions}});
 
 
-      const { level, xpCurrent } = get_level(actualUser.xp); //calcul du niveau de l'utilisateur 
-      req.session.username = req.body.username;   // Stocke le username dans la session
+      const { level, leftxp } = get_level(actualUser.xp); //calcul du niveau de l'utilisateur 
       req.session.date = actualUser.creation;
-      req.session.xp = xpCurrent;
+      req.session.xp = leftxp;
       req.session.userLevel = level;
       res.redirect('/');
     }
@@ -296,8 +291,8 @@ app.post('/register', async function (req, res) {
       console.log("Nouvel utilisateur ajouté à la base de données :", req.body.username);
       req.session.username = newUser.username;
       req.session.date = newUser.creation;
-      const { level, xpCurrent } = calculateLevel(newUser.xp); //calcul du niveau de l'utilisateur 
-      req.session.xp = xpCurrent;
+      const { level, leftxp } = get_level(newUser.xp); //calcul du niveau de l'utilisateur 
+      req.session.xp = leftxp;
       req.session.userLevel = level;
       res.redirect('/'); 
     }
@@ -384,8 +379,8 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
         const totalXP = user.xp + 10+ xpGained;
         await usersCollection.updateOne({username: req.session.username}, {$set: {xp: totalXP, trophies:user.trophies}});
         //calcul nouveau niveau
-        const {level, xpCurrent} = get_level(xpGained);
-        req.session.xp = xpCurrent;
+        const {level, leftxp} = get_level(totalXP);
+        req.session.xp = leftxp;
         req.session.userLevel = level;
 
         res.redirect("/");
