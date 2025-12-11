@@ -16,6 +16,7 @@ const checkLoginInput = require('./tests/checkLoginInput');
 const checkAddInput = require('./tests/checkAddInput');
 
 const dbModule = require('./database/db'); // renvoie un dico avec les imports : fonctions (voir exports db.js)
+const { title } = require('process');
 
 
 let seriesCollection = null;
@@ -87,28 +88,28 @@ app.get('/', async function (req, res) {
   }
 });
 
-// Fonction pour la barre de recherche de la page index.ejs ---------------------------------------> elle affiche les résultats en dessous des filtres ????
-app.post('/search', async function (req, res) { // il peut y avoir plusieurs séries et films avec un même titre
-  const title = req.body.search.trim(); // on réccupère le nom du film ou de la série
+// Fonction pour la barre de recherche de la page index.ejs 
+app.post('/search', async function (req, res) { 
+  const title = req.body.search.trim(); // on réccupère le nom du film ou de la série entré par l'utilisateur
   if (!title || title === "") {
     return res.redirect('/'); // le return sert à éviter que le reste de la fonction ne se fasse
   }
 
-  try {
+  try { // enlever series et movies 
     const allGenres = await dbModule.getGenres();
     const allSeries = await dbModule.getSeries();
     const allMovies = await dbModule.getMovies();
-    const series = await seriesCollection.find({ title: { $regex: `^${title}$`, $options: 'i' } }).toArray();
-    const movies = await moviesCollection.find({ title: { $regex: `^${title}$`, $options: 'i' } }).toArray();
-    
+    const serie = allSeries.find(s => s.title === title);
+    const movie = allMovies.find(m => m.title === title);
 
-    if (series.length === 0 && movies.length === 0) { // si aucun résultat n'a été trouvé dans la db
+    if (!serie && !movie) { // aucune oeuvre n'a été trouvée
       res.render('index', {
         username : req.session.username,
         userDate: req.session.date,
         userXp: req.session.xp,
-        userLevel: req.session.userLevel, 
-        series: series,
+        userLevel: req.session.userLevel,
+        movies: allMovies,
+        series: allSeries,
         allMovies: allMovies,
         allSeries: allSeries,
         genres: allGenres,
@@ -122,23 +123,12 @@ app.post('/search', async function (req, res) { // il peut y avoir plusieurs sé
     }
 
     else {
-      res.render('index', {
-        username: req.session.username,
-        userDate: req.session.date,
-        userXp: req.session.xp,
-        userLevel: req.session.userLevel,
-        movies: movies,
-        series: series,
-        allMovies: allMovies,
-        allSeries: allSeries,
-        genres: allGenres,
-        selectedFilters: {
-        type: "tous",
-        genre: "tous-les-genres",
-        popularity: "peu-importe"
-        },
-        error: null
-      });
+      if (movie) {
+        return res.redirect(`/oeuvre/${encodeURIComponent(movie.title)}`);
+      }
+      else {
+        return res.redirect(`/oeuvre/${encodeURIComponent(serie.title)}`);
+      }
     }
   }
   catch (err) {
@@ -204,7 +194,7 @@ app.post('/filter', async function (req, res) {
     username: req.session.username,
     userDate: req.session.date,
     userXp: req.session.xp,
-    userLevel: req.session.xp, 
+    userLevel: req.session.userLevel, 
     movies: filteredMovies,
     series: filteredSeries,
     allMovies: allMovies,
@@ -329,6 +319,16 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
     else if (!checkAddInput.isValidImage(req.file.originalname)) {
       return res.render('add', { username: req.session.username, error: "Image invalide"});
     }
+    // on vérifie d'abord que le titre n'existe pas déjà dans la db
+    const givenTitle = req.body.title.trim(); 
+
+    const existingMovie = await moviesCollection.findOne({ "title": { $regex: new RegExp(`^${givenTitle}$`, "i") } }); // pour éviter d'ajouter un titre avec une majuscule et le même sans
+    const existingSerie = await seriesCollection.findOne({ "title": { $regex: new RegExp(`^${givenTitle}$`, "i") } });
+
+    if (existingMovie || existingSerie) {
+      return res.render('add', { "username" : req.session.username, error: "Une œuvre portant ce titre existe déjà" });
+    }
+
     else {    
       if (req.body.title.trim() && req.body.type && req.body.description.trim() && req.body.genres.split(',').length > 0 && req.body.date && req.file && req.body.author.trim()) { // les champs obligatoires
         
@@ -368,7 +368,7 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
         if (!user.trophies) user.trophies = [];
         //regarder les nouveaux trophés gagnés
         const allTrophies = await trophiesCollection.find({category:"publication"}).toArray();
-        xpGained = 0;
+        let xpGained = 0;
         for(const trophy of allTrophies){
           if(user.missions.publication >= trophy.condition && !user.trophies.includes(trophy.id)){
             xpGained += trophy.xp_reward;
@@ -397,14 +397,14 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
 
 });
 
-app.get('/:title', async (req, res) => {
+app.get('/oeuvre/:title', async (req, res) => { // pour éviter les collisions avec d'autres routes --> /add, ...
   const title = decodeURIComponent(req.params.title); // (Voir index.js 2e section)
 
   const allSeries = await dbModule.getSeries();
   const allMovies = await dbModule.getMovies();
 
   const movie = allMovies.find(m => m.title === title);
-  const serie = allSeries.find(s => s.title === title)
+  const serie = allSeries.find(s => s.title === title);
 
   if (!movie && !serie) {
     return res.status(404).send("Film introuvable");
