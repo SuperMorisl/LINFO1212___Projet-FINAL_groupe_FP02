@@ -83,13 +83,13 @@ app.get('/', async function (req, res) {
       error: null
     });
   } catch (err) {
-    console.error("ERREUR DÉTAILLÉE DANS LA ROUTE / :", err); // ⬅️ AFFICHEZ L'ERREUR COMPLÈTE
+    console.error("ERREUR DÉTAILLÉE DANS LA ROUTE / :", err); // ⬅ AFFICHEZ L'ERREUR COMPLÈTE
     res.status(500).send("Problème avec la récupération des données dans la db");
   }
 });
 
 // Fonction pour la barre de recherche de la page index.ejs 
-app.post('/search', async function (req, res) { 
+app.post('/search', async function (req, res) { // -------------------------> enlever movies et series ???
   const title = req.body.search.trim(); // on réccupère le nom du film ou de la série entré par l'utilisateur
   if (!title || title === "") {
     return res.redirect('/'); // le return sert à éviter que le reste de la fonction ne se fasse
@@ -316,7 +316,7 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
     else if (!checkAddInput.isValidDescription(req.body.description)){
       return res.render('add', { username: req.session.username, error: "Description invalide"});
     } 
-    else if (!checkAddInput.isValidImage(req.file.originalname)) {
+    else if (!checkAddInput.isValidImage(req.file.originalname.trim())) {
       return res.render('add', { username: req.session.username, error: "Image invalide"});
     }
     // on vérifie d'abord que le titre n'existe pas déjà dans la db

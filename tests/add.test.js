@@ -53,7 +53,7 @@ describe("Check description validity", () => {
 
 });
 
-describe("Check image's format validity", () => { // rajouter un test pour les noms qui contiennent des espaces ???
+describe("Check image's format validity", () => {
     test ("image's format is valid", () => {
         let image = "you.png";
         let result = checkAddInput.isValidImage(image);
@@ -76,6 +76,11 @@ describe("Check image's format validity", () => { // rajouter un test pour les n
     });
     test("image's name doesn't contain an extension", () => { 
         let image = "imagefile";
+        let result = checkAddInput.isValidImage(image);
+        expect(result).toBeFalsy();
+    });
+     test("image's name contains spaces", () => { 
+        let image = "image file.png";
         let result = checkAddInput.isValidImage(image);
         expect(result).toBeFalsy();
     });

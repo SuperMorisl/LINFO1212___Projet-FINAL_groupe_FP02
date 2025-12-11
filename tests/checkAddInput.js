@@ -24,7 +24,8 @@ const checkAddInput = {
 
     const correctFormats = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff", ".svg"]; // les formats acceptés
     const lower = input.toLowerCase(); // pour éviter les problèmes de majuscules
-    return correctFormats.some(ext => lower.endsWith(ext)); // Array.some()
+    return correctFormats.some(ext => lower.endsWith(ext)) // Array.some()
+    && !(/\s/.test(input));  // pour interdir les images dont le nom contient des espaces au milieu 
 
     } 
 
