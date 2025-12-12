@@ -4,6 +4,7 @@ var app = express();
 var bodyParser = require("body-parser");
 
 
+const bcrypt = require('bcrypt');  //permet d'encrypter les mdp
 const multer = require("multer"); // permet de gérer les fichiers envoyés par un FORM pour pouvoir les stocker
 const path = require("path");
 const fs = require("fs");  //permet d'interagir avec le serv (sauvegarder des images)
@@ -11,6 +12,8 @@ const fs = require("fs");  //permet d'interagir avec le serv (sauvegarder des im
 // configuration de multer
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
+const saltRounds=10;//définir le salt pr bcrypt;
 
 const checkLoginInput = require('./tests/checkLoginInput');
 const checkAddInput = require('./tests/checkAddInput');
@@ -226,7 +229,11 @@ app.post('/login', async (req, res) => {
 
 
     const actualUser = await usersCollection.findOne({ username: req.body.username }); // On réccupère l'utilisateur s'il existe dans la db
-    if (actualUser && req.body.password == actualUser.password) { // Vérification de si l'utilisateur existe dans db
+    if (!actualUser) {
+      res.render('login', { error: "Utilisateur non trouvé", hasAccount: true });
+    }
+    const secure = await bcrypt.compare(req.body.password, actualUser.password);
+    if ( secure) { // Vérification de si l'utilisateur existe dans db
       if (!actualUser.missions){
         actualUser.missions = {"publication":0, "commentaires":0,"visites":0};
       }
@@ -244,7 +251,7 @@ app.post('/login', async (req, res) => {
     else if (!actualUser) {
       res.render('login', { error: "Utilisateur non trouvé", hasAccount: true });
     }
-    else if (req.body.password != actualUser.password) {
+    else if (!secure) {
       res.render('login', { error: "Mot de passe incorrect", hasAccount: true });
     }
   }
@@ -276,7 +283,18 @@ app.post('/register', async function (req, res) {
         month: "long",
       });
 
-      const newUser = { "username": req.body.username, "password": req.body.password, "email": req.body.email, "creation" : creation_date, "xp" : 0};
+      //hashage du mdp
+      let password_hashed = false;
+
+      try{
+        const salt = await bcrypt.genSalt(saltRounds);
+        password_hashed = await bcrypt.hash(req.body.password, salt);
+      }catch(err){
+        console.log("Erreur lors du hachage du mdp", err)
+      }
+
+      const missions = {"publication":0, "commentaires":0,"visites":0};
+      const newUser = { "username": req.body.username, "password": password_hashed, "email": req.body.email, "creation" : creation_date, "xp" : 0, "missions":missions, "trophies": []};
       await usersCollection.insertOne(newUser);
       console.log("Nouvel utilisateur ajouté à la base de données :", req.body.username);
       req.session.username = newUser.username;
@@ -418,6 +436,25 @@ app.get('/oeuvre/:title', async (req, res) => { // pour éviter les collisions a
     res.render ('oeuvre', { oeuvre : serie })
   }
 });
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+
+app.get('/logout', function(req, res) {
+  if (req.session.username){
+    req.session.destroy(err=>{
+      if (err){
+        console.log("erreur lors de la déconnexion", err);
+      }else{
+        res.redirect('/');
+      }
+    });
+  }else {
+    res.redirect('/');
+  }
+}
+);
+
+
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------

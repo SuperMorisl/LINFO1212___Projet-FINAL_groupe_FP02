@@ -120,6 +120,17 @@ button.close-btn {
     transition: background-color 0.3s;
 }
 
+.button-logout {
+    position: relative;
+    background-color: #155DFC;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
 /* Style de la pop up - FIN */
 
 /* Style de la barre de recherce - DEBUT */

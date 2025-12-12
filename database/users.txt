@@ -1,0 +1,7 @@
+
+le mot de passe doit contenir au moins 1 maj, 1 min et 1 chiffre
+
+mot de passe  
+- moimeme => Modepasse123456
+- Sarah_123 => Secret12345
+- Jean_Michel => beauChat5674
