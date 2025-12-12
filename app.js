@@ -227,7 +227,7 @@ app.post('/filter', async function (req, res) {
 //------------------------------------------------------------------
 app.get('/login', (req, res) => {
   if (req.session.username) { // si l'utilisateur est déjà connecté
-    res.redirect('/profile'); // l'utilisateur verra son profile avec son niveau et ses trophés
+    res.redirect('/'); // On le renvoie sur la page principale
   }
       
   res.render('login', { error: null, hasAccount: null });  // error permet de vérifier si le mot de passe est correct (voir dans login.ejs)

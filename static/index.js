@@ -3,11 +3,19 @@
 // -----------------------------------
 
 function openPopup() {
-  document.getElementById("popUp").style.display = "block";
+  document.getElementById("popUp").style.display = "flex";
 }
 
 function closePopup() {
   document.getElementById("popUp").style.display = "none";
+}
+
+function openPopupMobile() {
+  document.getElementById("popUpMobile").style.display = "flex";
+}
+
+function closePopupMobile() {
+  document.getElementById("popUpMobile").style.display = "none";
 }
 
 // ---------------------------------

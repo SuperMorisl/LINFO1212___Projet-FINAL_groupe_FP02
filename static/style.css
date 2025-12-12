@@ -90,18 +90,24 @@ nav .actions,
 div.popup {
     display: none; /* Cachée par défaut mais modifiable dans le js static */
     position: fixed;
+    flex-direction: column;
+    row-gap: 1.5rem;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%); /* Centre la popUp en + de top et left */
     overflow-y: auto; /* permet de scroller */
 
     width: 70%;
-    max-height: 80vh;
+    max-height: 92vh;
     padding: 3rem;
-    z-index: 100; /* Juste pour dire qu'il s'affiche à l'avant plan*/
+    z-index: 9000; /* Juste pour dire qu'il s'affiche à l'avant plan*/
 
-    background: #1E2939;
-    border: 2px solid #0F1727;
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 8rem 0 0 0; /* que le haut */
+    border-image: linear-gradient(140deg, #0A1EFF 0%,#155DFC 10%,#3A4BFF 30%,#6A5CF6 50%,#9B7CFF 70%,#C0A6FF 100%) 1;
+
+    background: #1C2636;
     border-radius: 15px;
 }
 
@@ -120,15 +126,145 @@ button.close-btn {
     transition: background-color 0.3s;
 }
 
-.button-logout {
-    position: relative;
-    background-color: #155DFC;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+.popup .double-boutons {
+    justify-content: flex-end;
+    gap: 3rem;
+}
+
+.popup .icon img {
+    border-radius: 50%;
+    width: 3rem;
+}
+
+.popup h1 {
+    margin: 0;
+    font-weight: 400;
+    font-size: 1.7rem;
+}
+
+.profile-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+}
+
+.niveau-info {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    padding: 1rem;
+    gap: 1.2rem;
+    box-sizing: border-box;
+    background: #0F1727;
+
+    border-radius: 10px;
+}
+
+.niveau {
+    width: fit-content;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
+    border-radius: 20px;
+}
+
+
+.level {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 15px;
+  background-color: rgb(2, 2, 17);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.shape {
+  height: 15px;
+  background-image: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
+  border-radius: 25px;
+  position: absolute;
+  transition: width 0.5s;
+}
+
+/* Classes pour chaque XP */
+.xp-0  { width: 0%; }
+.xp-1  { width: 5%; }
+.xp-2  { width: 10%; }
+.xp-3  { width: 15%; }
+.xp-4  { width: 20%; }
+.xp-5  { width: 25%; }
+.xp-6  { width: 30%; }
+.xp-7  { width: 35%; }
+.xp-8  { width: 40%; }
+.xp-9  { width: 45%; }
+.xp-10 { width: 50%; }
+.xp-11 { width: 55%; }
+.xp-12 { width: 60%; }
+.xp-13 { width: 65%; }
+.xp-14 { width: 70%; }
+.xp-15 { width: 75%; }
+.xp-16 { width: 80%; }
+.xp-17 { width: 85%; }
+.xp-18 { width: 90%; }
+.xp-19 { width: 95%; }
+
+.missions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 1rem;
+    width: 90%;
+    padding: 0.5rem 0 2rem 0;
+    box-sizing: border-box;
+    margin: auto;
+
+    border-bottom: solid 2px #333E51;
+}
+
+.mission {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background: #0F1727;
+    width: 15rem;
+    padding: 1.5rem 3rem;
+
+    box-sizing: border-box;
+    border-radius: 15px;
+
+    transition: border 0.2s ease-in;
+}
+
+.mission img {
+    width: 2.5rem;
+}
+
+.cyan {
+    border: solid 2px #00dbeb81;
+}
+
+.cyan:hover {
+    border: solid 2px #00dbeb;
+}
+
+.violet {
+    border: solid 2px #af40ff77;
+}
+
+.violet:hover {
+    border: solid 2px #af40ff;
+}
+
+.bleu {
+    border: solid 2px #155efc7a;
+}
+
+.bleu:hover {
+    border: solid 2px #155efc;
 }
 
 /* Style de la pop up - FIN */
@@ -388,15 +524,15 @@ input::placeholder {
 .oeuvre, .tendance {
     position: relative;
     transition: transform 0.3s ease;
+    cursor: pointer;
 }
 
 .oeuvre img, .tendance img {
     display: block;
     max-width: 100%;       
-    height: 100%;
+    height: 500px;
     border-radius: 15px;
     object-fit: cover;  /* recadrage si nécessaire */
-    cursor: pointer;
 }
 
 .oeuvre:hover,
@@ -799,13 +935,15 @@ input[type="file"] { /* Ils sont pas centré verticalement de base... Donc on le
 
 .avis h1,
 .avis h2,
-.avis h3 {
+.avis h3,
+.popup h2 {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 400;
 }
 
-.avis h2 {
+.avis h2
+.popup h2 {
     font-size: 1rem;
     font-weight: 300;
 }
@@ -815,7 +953,8 @@ input[type="file"] { /* Ils sont pas centré verticalement de base... Donc on le
     color: #686c73;
 }
 
-.avis .icon {
+.avis .icon,
+.popup .icon {
     padding: 0;
     justify-content: flex-start;
 }
@@ -866,6 +1005,28 @@ input[type="file"] { /* Ils sont pas centré verticalement de base... Donc on le
     nav .searchbar {
         display: none;
     }
+
+    /* Style de la pop up - DEBUT */
+
+    div.popup {
+        width: 90vw;
+        padding: 2rem;
+        border-width: 5rem 0 0 0;
+    }
+
+    .popup h1 {
+        font-size: 1.2rem;
+    }
+
+    .niveau-info {
+        width: 100%;
+    }
+
+    .mission img {
+        width: 2.2rem;
+    }
+
+    /* Style de la pop up - FIN */
 
     /* Style du burger menu - DEBUT */
 
@@ -995,6 +1156,7 @@ input[type="file"] { /* Ils sont pas centré verticalement de base... Donc on le
         font-size: 0.93rem;
     }
 
+    .popup h2,
     .avis h2, 
     .votre-avis .form .input-group textarea {
         font-size: 0.87rem;
@@ -1002,7 +1164,6 @@ input[type="file"] { /* Ils sont pas centré verticalement de base... Donc on le
 
     .avis h3 {
         font-size: 0.8rem;
-        color: #686c73;
     }
 
     /* Style des avis - FIN */
