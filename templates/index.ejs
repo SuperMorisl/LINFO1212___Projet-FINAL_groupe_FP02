@@ -99,26 +99,26 @@
         <span class="blue">Tendance du Mois</span>
     </div>
 
-    <div class="tendance" style="background-image: url('image/stranger_things.png');"> <!-- Obligé car texte à l'intérieur -->
+    <div class="tendance" style="background-image: url('/image/<%= mostPopular.image %>');"> <!-- Obligé car texte à l'intérieur -->
         <div class="details">
             <div class="ensemble">
                 <div class="popularite">#1 Populaire</div>
-                <div class="type">Serie</div>
+                <div class="type"><%= mostPopularType %></div>
             </div>
             <div class="description">
-                <h1>Stranger Things</h1>
-                <h2>Dans une petite ville où tout le monde se connaît, un incident étrange déclenche une série d'événements qui mènent à la disparition d'un enfant, ébranlant le tissu social d'une communauté jusque-là paisible. Des agences gouvernementales obscures et des forces surnaturelles apparemment maléfiques convergent vers la ville, tandis que certains habitants commencent à comprendre que des choses plus graves se trament qu'il n'y paraît.</h2>
+                <h1><%= mostPopular.title %></h1>
+                <h2><%= mostPopular.description %></h2>
             </div>
             <div class="ensemble">
                 <span class="star">★</span>
                 <div class="notes">
-                    <span>4.7</span>
-                    <span class="grey">(2887 avis)</span>
+                    <span><%= mostPopular.averageRating %></span>
+                    <span class="grey">(<%= mostPopular.reviews.length %> avis)</span>
                 </div>
                 <div class="genres">
-                    <span>Drame</span>
-                    <span>Horreur</span>
-                    <span>Science-fiction</span>
+                    <% mostPopular.genre.forEach(g=> { %>
+                        <span><%= g %></span>
+                    <% }) %>
                 </div>
             </div>
         </div>

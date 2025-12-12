@@ -87,6 +87,32 @@ async function getGenres() {
   return genres;
 }
 
+async function getMostPopular() {
+  const movies = await getMovies();
+  const series = await getSeries();
+  let mostPopular = undefined;
+  let mostPopularRating = 0;
+  let mostPopularType = undefined;
+
+  movies.forEach(movie => {
+    if (movie.averageRating > mostPopularRating) {
+      mostPopular = movie;
+      mostPopularRating = movie.averageRating;
+      mostPopularType = "Film";
+    }
+  });
+
+  series.forEach(serie => {
+    if (serie.averageRating > mostPopularRating) {
+      mostPopular = serie;
+      mostPopularRating = serie.averageRating;
+      mostPopularType = "Série";
+    }
+  })
+
+  return {mostPopular, mostPopularType};
+}
+
 async function getUsers() {
   return await getCollection(usersCollection);
 }
@@ -97,6 +123,7 @@ module.exports = {
   initDB,  
   getMovies, 
   getSeries,
-  getGenres, 
+  getGenres,
+  getMostPopular, 
   getTrophies,
   getCollection };

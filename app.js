@@ -64,6 +64,7 @@ app.get('/', async function (req, res) {
     const allMovies = await dbModule.getMovies(); //renvoi des films et séries dans la page d'accueil
     const allSeries = await dbModule.getSeries();
     const allGenres = await dbModule.getGenres();
+    const mostPopularInfo = await dbModule.getMostPopular();
 
     const xp = req.session.xp || 0;
     const userLevel = req.session.userLevel || 1;
@@ -77,6 +78,8 @@ app.get('/', async function (req, res) {
       series: allSeries, 
       allMovies: allMovies,
       allSeries: allSeries,
+      mostPopular : mostPopularInfo.mostPopular,
+      mostPopularType : mostPopularInfo.mostPopularType,
       genres: allGenres,
       selectedFilters: {
       type: "tous",
@@ -102,6 +105,8 @@ app.post('/search', async function (req, res) { // -------------------------> en
     const allGenres = await dbModule.getGenres();
     const allSeries = await dbModule.getSeries();
     const allMovies = await dbModule.getMovies();
+    const mostPopularInfo = await dbModule.getMostPopular();
+
     const serie = allSeries.find(s => s.title === title);
     const movie = allMovies.find(m => m.title === title);
 
@@ -115,6 +120,8 @@ app.post('/search', async function (req, res) { // -------------------------> en
         series: allSeries,
         allMovies: allMovies,
         allSeries: allSeries,
+        mostPopular : mostPopularInfo.mostPopular,
+        mostPopularType : mostPopularInfo.mostPopularType,
         genres: allGenres,
         selectedFilters: {
         type: "tous",
@@ -151,6 +158,7 @@ app.post('/filter', async function (req, res) {
   const allMovies = await dbModule.getMovies(); 
   const allSeries = await dbModule.getSeries();
   const allGenres = await dbModule.getGenres();
+  const mostPopularInfo = await dbModule.getMostPopular();
 
   let filteredMovies = allMovies;
   let filteredSeries = allSeries;
@@ -202,6 +210,8 @@ app.post('/filter', async function (req, res) {
     series: filteredSeries,
     allMovies: allMovies,
     allSeries: allSeries,
+    mostPopular : mostPopularInfo.mostPopular,
+    mostPopularType : mostPopularInfo.mostPopularType,
     genres: allGenres,
     selectedFilters: {          
       type,
