@@ -19,7 +19,7 @@ function closePopup() {
 // --------------------------------------------
 
 function seeArtwork(title) {
-    window.location.href = "/" + encodeURIComponent(title); // On encode car on peut pas mettre /, ?, # ou & dans le nom de notre url
+    window.location.href = "/oeuvre/" + encodeURIComponent(title); // On encode car on peut pas mettre /, ?, # ou & dans le nom de notre url
 }
 
 // ------------------------------------------

@@ -6,14 +6,14 @@
     <title>C'est tourné ! - Page d'acceuil</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/index.js" defer></script>
-    <link rel="icon" href="image/logo.png">
+    <link rel="icon" href="site/logo.png">
     <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
     <nav>
         <div class="icon">
-            <img src="image/logo.png">
+            <img src="site/logo.png">
             <span class="blue">C'est tourné !</span>
         </div>
         <div class="searchbar">
@@ -49,6 +49,7 @@
                     <h2>Membre depuis <%= userDate %></h2>
                     <h2>Niveau <%= userLevel %></h2>
                     <h3>XP : <%= userXp %></h3>
+                    <h3></h3>
                     <a href="/logout" class="button-logout">Se Déconnecter</a>
                     <button class="close-btn" onclick="closePopup()"><span>X</span></button>
                 </div>
@@ -94,7 +95,7 @@
     </nav>
 
     <div class="icon tendance-icon">
-        <img src="image/tendance.png">
+        <img src="/site/tendance.png">
         <span class="blue">Tendance du Mois</span>
     </div>
 
@@ -131,7 +132,7 @@
 
     <div class="filter-container">
         <div class="icon">
-            <img src="image/filter.png">
+            <img src="/site/filter.png">
             <span>Filtres :</span>
         </div>
     

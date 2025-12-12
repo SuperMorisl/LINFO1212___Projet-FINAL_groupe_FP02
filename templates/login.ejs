@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <title>C'est tourné ! - Connexion</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="image/logo.png">
+  <link rel="icon" href="/site/logo.png">
   <link rel="stylesheet" href="/style.css">
 </head>
 
@@ -14,7 +14,7 @@
 
   <nav>
     <div class="icon">
-      <img src="image/logo.png">
+      <img src="/site/logo.png">
       <span class="blue">C'est tourné !</span>
     </div>
   </nav>
@@ -23,6 +23,9 @@
 
     <div class="form-container">
       <p class="blue title">Connexion</p>
+      <% if (error && hasAccount) { %>
+        <p class="error"><%= error %></p>
+      <% } %>
       <form class="form" action="/login" method="POST">
         <div class="input-group">
           <label>Nom d'utilisateur</label>
@@ -34,17 +37,14 @@
         </div>
         <button class="sign" type="submit"><span>Se connecter</span></button>
 
-        <% if (error && hasAccount) { %>
-          <p class="error">
-          <%= error %>
-          </p>
-        <% } %>
-
       </form>
     </div>
 
     <div class="form-container">
       <p class="blue title">Inscription</p>
+      <% if (error && !hasAccount) { %>
+        <p class="error"><%= error %></p>
+      <% } %>
       <form class="form" action="/register" method="POST">
         <div class="input-group">
           <label>Nom d'utilisateur</label>
@@ -59,11 +59,6 @@
           <input type="password" name="password" id="password" required>
         </div>
         <button class="sign" type="submit"><span>S'inscrire</span></button>
-        <% if (error && !hasAccount) { %>
-          <p class="error">
-          <%= error %>
-          </p>
-        <% } %>
       </form>
     </div>
 

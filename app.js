@@ -230,7 +230,7 @@ app.post('/login', async (req, res) => {
 
     const actualUser = await usersCollection.findOne({ username: req.body.username }); // On réccupère l'utilisateur s'il existe dans la db
     if (!actualUser) {
-      res.render('login', { error: "Utilisateur non trouvé", hasAccount: true });
+      return res.render('login', { error: "Utilisateur non trouvé", hasAccount: true });
     }
     const secure = await bcrypt.compare(req.body.password, actualUser.password);
     if (secure) { // Vérification de si l'utilisateur existe dans db
@@ -426,11 +426,11 @@ app.get('/oeuvre/:title', async (req, res) => { // pour éviter les collisions a
   }
 
   else if (movie) {
-    res.render('oeuvre', { oeuvre : movie });
+    res.render('oeuvre', { oeuvre : movie, type : "Film"});
   }
 
   else {
-    res.render ('oeuvre', { oeuvre : serie })
+    res.render ('oeuvre', { oeuvre : serie, type: "Série"})
   }
 });
 
