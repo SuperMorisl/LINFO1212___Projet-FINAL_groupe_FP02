@@ -233,7 +233,7 @@ app.post('/login', async (req, res) => {
       res.render('login', { error: "Utilisateur non trouvé", hasAccount: true });
     }
     const secure = await bcrypt.compare(req.body.password, actualUser.password);
-    if ( secure) { // Vérification de si l'utilisateur existe dans db
+    if (secure) { // Vérification de si l'utilisateur existe dans db
       if (!actualUser.missions){
         actualUser.missions = {"publication":0, "commentaires":0,"visites":0};
       }
@@ -247,9 +247,6 @@ app.post('/login', async (req, res) => {
       req.session.xp = leftxp;
       req.session.userLevel = level;
       res.redirect('/');
-    }
-    else if (!actualUser) {
-      res.render('login', { error: "Utilisateur non trouvé", hasAccount: true });
     }
     else if (!secure) {
       res.render('login', { error: "Mot de passe incorrect", hasAccount: true });
