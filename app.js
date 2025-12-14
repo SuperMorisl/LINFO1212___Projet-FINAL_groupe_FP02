@@ -20,6 +20,7 @@ const checkAddInput = require('./tests/checkAddInput');
 
 const dbModule = require('./database/db'); // renvoie un dico avec les imports : fonctions (voir exports db.js)
 const { title } = require('process');
+const { Collection } = require('mongodb');
 
 
 let seriesCollection = null;
@@ -68,12 +69,21 @@ app.get('/', async function (req, res) {
 
     const xp = req.session.xp || 0;
     const userLevel = req.session.userLevel || 1;
-  
+    let userMissions = {"publication": 0, "commentaires":0, "visites":0};
+
+    if(req.session.username){
+      const fullUser = await usersCollection.findOne({username:req.session.username});
+      if (fullUser){
+        userMissions = fullUser.missions || userMissions;
+        
+      }
+    }
     res.render('index', {
       username: req.session.username,
       userDate: req.session.date,
       userXp: xp,
       userLevel: userLevel,
+      userMissions : userMissions,
       movies: allMovies,
       series: allSeries, 
       allMovies: allMovies,
@@ -443,6 +453,93 @@ app.get('/oeuvre/:title', async (req, res) => { // pour éviter les collisions a
     res.render ('oeuvre', { oeuvre : serie, type: "Série"})
   }
 });
+
+app.post('/review/:title', async (req, res) => {
+  if (!req.session.username){
+    return res.redirect('/login');
+  }
+  const title = decodeURIComponent(req.params.title);
+  const userNote = parseInt(req.body.note);
+  const userComment = req.body.comment;
+  const username = req.session.username;
+
+  if (isNaN(userNote)||userNote<1||userNote>5||userComment.length<5){
+    console.log("Commentaire non-vaide");
+    return res.redirect(`/oeuvre/${encodeURIComponent(title)}`);
+
+  }
+  try{
+    
+    let collection = null;
+    let oeuvre = await moviesCollection.findOne({title:title});
+    
+    if(oeuvre){
+      collection = moviesCollection;
+    }else{
+      oeuvre = await seriesCollection.findOne({title:title});
+      if (oeuvre){
+        collection = seriesCollection;
+      }
+    }
+    if (!oeuvre) {
+             console.log(`Œuvre '${title}' non trouvée pour l'ajout d'avis.`);
+             return res.status(404).send("Œuvre introuvable.");
+        }
+
+    const existingReview = oeuvre.reviews.find(r=> r.user === username);
+    if ( existingReview){
+      return res.redirect(`/oeuvre/${encodeURIComponent(title)}`);
+    }
+    if (!collection) {
+            console.error("Erreur de logique: collection non définie pour une oeuvre trouvée.");
+            return res.status(500).send("Erreur serveur interne.");
+        }
+    const newReview = {user: username, note: userNote, comment:userComment, likes:0};
+    const updatedReviews = [...oeuvre.reviews, newReview];
+
+    const totalNotes = updatedReviews.reduce((sum, review)=> sum+review.note, 0)
+    const newAverageRating = (totalNotes / updatedReviews.length).toFixed(1);
+
+    await collection.updateOne(
+      {title:title},
+      {$set: {reviews:updatedReviews, averageRating: parseFloat(newAverageRating)}}
+    );
+
+    const user = await usersCollection.findOne({username:username});
+    if(user){
+      const missions = user.missions;
+      missions.commentaires++;
+      
+      let xpGained = 5;
+      let newTrophies = user.trophies;
+
+      const allTrophies = await trophiesCollection.find({category:"commentaires"}).toArray();
+      for (const trophy of allTrophies){
+        if (missions.commentaires>=trophy.condition&& !newTrophies.includes(trophy.id)){
+          xpGained += trophy.xp_reward;
+          newTrophies.push(trophy.id);
+        }
+      }
+      const totalXP = user.xp+xpGained;
+      const {level, leftxp} = get_level(totalXP);
+      await usersCollection.updateOne(
+        {username:username},{$set:{missions:missions, xp:totalXP, trophies:newTrophies}}
+      );
+      req.session.xp = leftxp;
+      req.session.userLevel = level;
+    }
+    return res.redirect(`/oeuvre/${encodeURIComponent(title)}`);
+  }catch (err){
+    console.log("erreur détaillé dans /review", err);
+    return res.status(500).send("Erreur lors de la soumission de l'avis."); // ⭐ CORRECTION: Arrêter l'exécution
+  }
+});
+
+
+
+
+
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------
 

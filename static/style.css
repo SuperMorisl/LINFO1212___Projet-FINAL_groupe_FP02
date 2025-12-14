@@ -977,7 +977,12 @@ input[type="file"] { /* Ils sont pas centré verticalement de base... Donc on le
 /* ----------[ FIN DU FICHIER oeuvre.ejs ]---------- */
 
 
-
+.close-btn {
+    /* S'assurer qu'il ne s'étend pas au-delà de son contenu */
+    display: inline-block; 
+    /* Ajoutez d'autres styles pour le positionnement... */
+    z-index: 1000; /* Assurez-vous qu'il est au-dessus de tout le reste */
+}
 /* Pour changer certains attributs pour que ça soit responsive sur mobile */
 @media (max-width: 550px) {
     body {
