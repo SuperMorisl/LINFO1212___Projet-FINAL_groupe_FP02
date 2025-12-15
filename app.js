@@ -13,7 +13,7 @@ const fs = require("fs");  //permet d'interagir avec le serv (sauvegarder des im
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const saltRounds=10;//définir le salt pr bcrypt;
+const saltRounds = 10; //définir le salt pr bcrypt;
 
 const checkLoginInput = require('./tests/checkLoginInput');
 const checkAddInput = require('./tests/checkAddInput');
@@ -132,20 +132,25 @@ app.post('/search', async function (req, res) { // -------------------------> en
     const allSeries = await dbModule.getSeries();
     const allMovies = await dbModule.getMovies();
     const mostPopularInfo = await dbModule.getMostPopular();
+    const allTrophies =await dbModule.getTrophies();
 
     const serie = allSeries.find(s => s.title === title);
     const movie = allMovies.find(m => m.title === title);
+    const currentUser = await usersCollection.findOne({username:req.session.username});
 
     if (!serie && !movie) { // aucune oeuvre n'a été trouvée
       res.render('index', {
         username : req.session.username,
         userDate: req.session.date,
-        userXp: req.session.xp,
-        userLevel: req.session.userLevel,
+        userXp: req.session.xp || 0,
+        userLevel: req.session.userLevel || 1,
+        userMissions: currentUser ? currentUser.missions : {"publication": 0, "commentaires":0, "visites":0},
+        userTrophies: currentUser ? currentUser.trophies : [],
         movies: allMovies,
         series: allSeries,
         allMovies: allMovies,
         allSeries: allSeries,
+        allTrophies: allTrophies,
         mostPopular : mostPopularInfo.mostPopular,
         mostPopularType : mostPopularInfo.mostPopularType,
         genres: allGenres,
@@ -185,6 +190,8 @@ app.post('/filter', async function (req, res) {
   const allSeries = await dbModule.getSeries();
   const allGenres = await dbModule.getGenres();
   const mostPopularInfo = await dbModule.getMostPopular();
+  const allTrophies = await dbModule.getTrophies();
+  const currentUser = await usersCollection.findOne({username:req.session.username});
 
   let filteredMovies = allMovies;
   let filteredSeries = allSeries;
@@ -216,7 +223,6 @@ app.post('/filter', async function (req, res) {
   }
 
   // filtre en fonction de la popularité
-// filtre en fonction de la popularité (CORRIGÉ)
   if (popularity === "plus-populaire") {
       // Tri décroissant, utilise getRating pour gérer les valeurs manquantes
       filteredMovies.sort((a, b) => getRating(b) - getRating(a)); 
@@ -227,15 +233,20 @@ app.post('/filter', async function (req, res) {
       filteredMovies.sort((a, b) => getRating(a) - getRating(b));
       filteredSeries.sort((a, b) => getRating(a) - getRating(b));
   }
+
+
   res.render('index', {
     username: req.session.username,
     userDate: req.session.date,
-    userXp: req.session.xp,
-    userLevel: req.session.userLevel, 
+    userXp: req.session.xp || 0,
+    userLevel: req.session.userLevel || 1,
+    userMissions: currentUser ? currentUser.missions : {"publication": 0, "commentaires":0, "visites":0},
+    userTrophies: currentUser ? currentUser.trophies : [],
     movies: filteredMovies,
     series: filteredSeries,
     allMovies: allMovies,
     allSeries: allSeries,
+    allTrophies: allTrophies,
     mostPopular : mostPopularInfo.mostPopular,
     mostPopularType : mostPopularInfo.mostPopularType,
     genres: allGenres,
