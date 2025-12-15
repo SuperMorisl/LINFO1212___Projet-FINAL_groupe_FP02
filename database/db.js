@@ -123,7 +123,7 @@ async function addLikeToReview(title, reviewUser, currentUser){
   try{
     const titled = decodeURIComponent(title);
 
-    const updateResult = await moviesCollection.findOneAndUpdate(
+    let  updateResult = await moviesCollection.findOneAndUpdate(
       {
         title: titled,
         'reviews.user':reviewUser
