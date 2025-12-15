@@ -44,47 +44,6 @@
             </a>
             <% if (username) { %>
                 <div class="connecter" onclick="openPopup()"></div>
-                <div class="popup" id="popUp">
-                
-                    <div class="icon">
-                        <img src="/site/profile.webp">
-                        <h1><%= username %></h1>
-                    </div>
-
-                    <span class="grey">Membre depuis <%= userDate %></span>
-                
-                    <div class="niveau-info">
-                        <div class="niveau">
-                            <h2>Niveau <%= userLevel %></h2>
-                        </div>
-                        <div class="level">
-                            <div class="shape xp-<%= userXp %>"></div>
-                        </div>
-                    </div>
-
-                    <div class="missions">
-                        <div class="mission cyan">
-                            <img src="/site/comment.png">
-                            <h1><%= userMissions.commentaires%></h1>
-                            <span class="grey">Avis ajoutées</span>
-                        </div>
-                        <div class="mission violet">
-                            <img src="/site/eye.png">
-                            <h1><%= userMissions.visites %></h1>
-                            <span class="grey">Visites</span>
-                        </div>
-                        <div class="mission bleu">
-                            <img src="/site/logo.png">
-                            <h1><%= userMissions.publication %></h1>
-                            <span class="grey">Oeuvres ajoutées</span>
-                        </div>
-                    </div>
-                    
-                    <div class="double-boutons">
-                        <a href="/logout"><button class="close-btn"><span>Se déconnecter</span></button></a>
-                        <button class="close-btn" onclick="closePopup()"><span>X</span></button>
-                    </div>
-                </div>
             <% } else { %>
                 <a href="/login">
                     <div class="connecter"></div>
@@ -119,82 +78,9 @@
                 <div class="ajouter"><span>+</span><span>Ajouter</span></div>
             </a>
             <% if (username) { %>
-                <div class="icon" onclick="openPopupMobile()">
+                <div class="icon" onclick="openPopup()">
                     <div class="connecter"></div>
                     <span>Mon compte</span>
-                </div>
-                <div class="popup" id="popUpMobile">
-                
-                    <div class="icon">
-                        <img src="/site/profile.webp">
-                        <h1><%= username %></h1>
-                    </div>
-
-                    <span class="grey">Membre depuis <%= userDate %></span>
-                
-                    <div class="niveau-info">
-                        <div class="niveau">
-                            <h2>Niveau <%= userLevel %></h2>
-                        </div>
-                        <div class="level">
-                            <div class="shape xp-<%= userXp %>"></div>
-                        </div>
-                    </div>
-
-                    <div class="missions">
-                        <div class="mission cyan">
-                            <img src="/site/comment.png">
-                            <h1><%= userMissions.commentaires %></h1>
-                            <span class="grey">Avis ajoutées</span>
-                        </div>
-                        <div class="mission violet">
-                            <img src="/site/eye.png">
-                            <h1><%= userMissions.visites %></h1>
-                            <span class="grey">Visites</span>
-                        </div>
-                        <div class="mission bleu">
-                            <img src="/site/logo.png">
-                            <h1><%= userMissions.publication %> </h1>
-                            <span class="grey">Oeuvres ajoutées</span>
-                        </div>
-                    </div>
-
-                    <!--trophéeeeeeeeeessssssssssss-->
-                    <h2>Mes trophées</h2>
-                    <div class="trophies-grid">
-                    <%  if (Array.isArray(allTrophies)){
-                            allTrophies.forEach(trophy => {
-                                const isUnlocked = (userTrophies || []).includes(trophy.id);
-                                
-                                //remplacer car css inclut dans html
-                               
-                                const opacityStyle = isUnlocked ? 'opacity:1;':'opacity:0.3;filter:grayscale(100%);';    
-                                const currentCount = userMissions[trophy.category]||0;
-                                const remaining = trophy.condition - currentCount;
-                           %>
-                           <div class="trophy-card" >
-                                title="Condition: <%= trophy.condition %> <%= trophy.category %>. <%= trophy.description %>">
-                                
-                                <img src="<%= trophy.image %>" alt="<%= trophy.title %>">
-                                
-                                <p class="trophy-title"><%= trophy.title %></p>
-                                
-                                <% if (!isUnlocked && remaining > 0) { %>
-                                    <small><%= remaining %> restant(s)</small>
-                                <% } else if (isUnlocked) { %>
-                                    <small>DÉBLOQUÉ</small>
-                                <% } %>
-                            </div>
-                          <%});
-                        }else{%> 
-                            <p>Erreur</p><% } %>
-                    </div>
-
-
-                    <div class="double-boutons">
-                        <a href="/logout"><button class="close-btn"><span>Se déconnecter</span></button></a>
-                        <button class="close-btn" onclick="closePopupMobile()"><span>X</span></button>
-                    </div>
                 </div>
             <% } else { %>
                 <div class="icon">
@@ -297,6 +183,66 @@
     <% } %>
 </div>
 
+<!-- PopUp du profile -->
+ <div class="popup" id="popUp">
+                
+                    <div class="icon">
+                        <img src="/site/profile.webp">
+                        <h1><%= username %></h1>
+                    </div>
+
+                    <span class="grey">Membre depuis <%= userDate %></span>
+                
+                    <div class="niveau-info">
+                        <div class="niveau">
+                            <h2>Niveau <%= userLevel %></h2>
+                        </div>
+                        <div class="level">
+                            <div class="shape xp-<%= userXp %>"></div>
+                        </div>
+                    </div>
+
+                    <div class="missions">
+                        <div class="mission cyan">
+                            <img src="/site/comment.png">
+                            <h1><%= userMissions.commentaires%></h1>
+                            <span class="grey">Avis ajoutées</span>
+                        </div>
+                        <div class="mission violet">
+                            <img src="/site/eye.png">
+                            <h1><%= userMissions.visites %></h1>
+                            <span class="grey">Visites</span>
+                        </div>
+                        <div class="mission bleu">
+                            <img src="/site/oeuvre.png">
+                            <h1><%= userMissions.publication %></h1>
+                            <span class="grey">Oeuvres ajoutées</span>
+                        </div>
+                    </div>
+
+                    <div class="icon">
+                        <img src="/site/trophee.png">
+                        <h1>Mes trophées</h1>
+                    </div>
+                    <div class="missions">
+                        <% allTrophies.forEach(t=> {
+                            const unlocked = userTrophies.includes(t.id);
+                            %>
+                            <div class="mission <%= unlocked ? '' : 'locked-mission' %>">
+                                <img src="<%= t.image %>">
+                                <h1><%= t.title %></h1>
+                                <span class="grey"><%= t.description %></span>
+                            </div>
+                        <% }) %>
+                    </div>
+
+
+                    
+                    <div class="double-boutons">
+                        <a href="/logout"><button class="close-btn"><span>Se déconnecter</span></button></a>
+                        <button class="close-btn" onclick="closePopup()"><span>X</span></button>
+                    </div>
+                </div>
 
 </body>
 

@@ -10,14 +10,6 @@ function closePopup() {
   document.getElementById("popUp").style.display = "none";
 }
 
-function openPopupMobile() {
-  document.getElementById("popUpMobile").style.display = "flex";
-}
-
-function closePopupMobile() {
-  document.getElementById("popUpMobile").style.display = "none";
-}
-
 // ---------------------------------
 // | Comportement de la pop up FIN |
 // ---------------------------------

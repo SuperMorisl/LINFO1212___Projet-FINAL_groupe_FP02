@@ -119,38 +119,31 @@ async function getUsers() {
 
 
 
-async function addLikeToReview(title, reviewUser, currentUser){
-  try{
+async function addLikeToReview(title, reviewUser, currentUser) {
+  try {
     const titled = decodeURIComponent(title);
 
-    let  updateResult = await moviesCollection.findOneAndUpdate(
-      {
-        title: titled,
-        'reviews.user':reviewUser
-      },{
-        $inc:{ 'reviews.$.likes':1}
-      },
-      {new:true}
+    let updateResult = await moviesCollection.findOneAndUpdate(
+      { title: titled, 'reviews.user': reviewUser },
+      { $addToSet: { 'reviews.$.likes': currentUser } },
+      { new: true } // Permet de lire updateResult en suite et pas la version avec l'update
     );
 
-  if (!updateResult){
-    updateResult = await seriesCollection.findOneAndUpdate(
-      {title:titled, 'reviews.user':reviewUser},
-      {$inc:{'reviews.$.likes':1}},
-      {new:true}
+    if (!updateResult) {
+      updateResult = await seriesCollection.findOneAndUpdate(
+        { title: titled, 'reviews.user': reviewUser },
+        { $addToSet: { 'reviews.$.likes': currentUser } },
+        { new: true }
+      );
+    }
+    const updatedReviews = updateResult.reviews.find(r => r.user === reviewUser);
+    const newLikes = updatedReviews ? updatedReviews.likes.length : null; 
 
-    );
+    return { success: true, message: "Like succés", newLikes: newLikes }; // je sais pas pourquoi on revoie newLikes sans l'utiliser
+  } catch (err) {
+    console.error("like error", err);
+    return { success: false, message: "Erreur interne du serveur lors de la mise à jour." };
   }
-  const updatedReviews = updateResult.reviews.find(r => r.user === reviewUser);
-  const newLikes = updatedReviews ? updatedReviews.like : null;
-
-  return { success : true, message:"Like succés", newLikes:newLikes};
-}catch (err){
-  console.error("like error", err);
-  return { success: false, message: "Erreur interne du serveur lors de la mise à jour." };
-
-}
-
 }
 
 

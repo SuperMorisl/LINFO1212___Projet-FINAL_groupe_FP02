@@ -132,14 +132,18 @@ button.close-btn {
 }
 
 .popup .icon img {
-    border-radius: 50%;
+    border-radius: 45%;
     width: 3rem;
 }
 
 .popup h1 {
     margin: 0;
     font-weight: 400;
-    font-size: 1.7rem;
+    font-size: 1.5rem;
+}
+
+.popup .grey {
+    text-wrap: nowrap;
 }
 
 .profile-info {
@@ -239,8 +243,29 @@ button.close-btn {
     transition: border 0.2s ease-in;
 }
 
+.locked-mission {
+    position: relative;
+}
+
+
+.locked-mission::before {
+  content: '';
+  position: absolute;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  background: #0f1727e6; 
+  backdrop-filter: blur(2px); 
+  border-radius: 15px;
+
+  transition: all 0.3s ease-out;
+}
+
+.locked-mission:hover::before {
+    background: #0f17271f; 
+    backdrop-filter: blur(0px); 
+}
+
 .mission img {
-    width: 2.5rem;
+    width: 2.7rem;
 }
 
 .cyan {
@@ -398,12 +423,14 @@ input::placeholder {
 }
 
 .burger-menu .ajouter,
-.burger-menu .icon {
+.burger-menu .icon,
+.retour {
     font-size: 0.95rem;
 }
 
 .burger-menu .ajouter,
-.burger-menu .connecter {
+.burger-menu .connecter,
+.retour {
     height: 1.5rem;
 }
 
@@ -969,6 +996,12 @@ input[type="file"] { /* Ils sont pas centré verticalement de base... Donc on le
     width: fit-content;
     gap: 0.1rem;
     margin-bottom: 0.5rem;
+}
+
+.like-button-form {
+    background:none;
+    border: none;
+    padding: 0;
 }
 
 /* Style des avis - FIN */

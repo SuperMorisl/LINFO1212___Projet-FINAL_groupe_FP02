@@ -524,7 +524,7 @@ app.post('/review/:title', async (req, res) => {
             console.error("Erreur de logique: collection non définie pour une oeuvre trouvée.");
             return res.status(500).send("Erreur serveur interne.");
         }
-    const newReview = {user: username, note: userNote, comment:userComment, likes:0};
+    const newReview = {user: username, note: userNote, comment:userComment, likes: []};
     const updatedReviews = [...oeuvre.reviews, newReview];
 
     const totalNotes = updatedReviews.reduce((sum, review)=> sum+review.note, 0)
@@ -589,6 +589,34 @@ app.post('/like/:title', async (req, res) =>{
 
 }
 );
+
+app.get('/api/user/:username', async (req, res) => { // route special pour recupérer les infos d'un utilisateur
+  try {
+    const { username } = req.params;
+
+    const user = await usersCollection.findOne({ username: username });
+
+
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    const allTrophies = await dbModule.getTrophies();
+    const levelInfo = get_level(user.xp)
+
+    res.json({
+      username: user.username,
+      userDate: user.creation,
+      userLevel: levelInfo.level,
+      userXp: levelInfo.leftxp,
+      userMissions: user.missions,
+      allTrophies: allTrophies,      
+      userTrophies: user.trophies
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+});
 
 
 
