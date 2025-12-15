@@ -98,11 +98,16 @@
             <% } %>
           <% } %>
         </div>
-    
+    <!--probléme détecté ICIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII-->
         <h2><%= r.comment %></h2>
         <div class="icon">
-          <img src="/site/like.png"class="like-button" data-target-user="<%= r.user %>" onclick="handleLike(this)">
-          <h3><%= r.likes %> personnes ont trouvées cet avis utile</h3>
+          <form action="/like/<%= encodeURIComponent(oeuvre.title) %>" method="POST" style="display: inline;">
+            <input type="hidden" name="reviewUser" value="<%= r.user %>">
+            <button type="submit" class="like-button-form" style="background:none; border: none;padding: 0;">
+              <img src="/site/like.png"class="like-button" data-target-user="<%= r.user %>" >
+            </button>
+            <h3><%= r.likes %> personnes ont trouvées cet avis utile</h3>
+          </form>
         </div>
       </div>
     <% }) %>

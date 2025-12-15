@@ -23,6 +23,11 @@ const { title } = require('process');
 const { Collection } = require('mongodb');
 
 
+// Middleware essentiel pour parser le corps des requêtes (body) en JSON
+app.use(express.json());
+// Middleware pour parser les données des formulaires HTML classiques
+app.use(express.urlencoded({ extended: true }));
+
 let seriesCollection = null;
 let moviesCollection = null;
 let usersCollection = null;
@@ -536,44 +541,29 @@ app.post('/review/:title', async (req, res) => {
 });
 
 app.post('/like/:title', async (req, res) =>{
-  if (!req.session.username){
-    return res.render('/login');
+  const title = req.params.title;
+  const reviewUser = req.body.reviewUser;
+  const currentUser = req.session.user;  
 
+  console.log("REQUÊTEaLIKE REÇUE PAR FORMULAIRE POUR LE TITRE:", title);
+  console.log("Utilisateur cible:", reviewUser);
+  console.log("Utilisateur connecté:", currentUser);
+
+  if (!reviewUser) {
+        return res.status(400).send("utilisateru cible pas trouvé");
+    }
+
+
+  const result = await dbModule.addLikeToReview(title, reviewUser, currentUser);
+
+  if (result.success){
+    res.redirect(`/oeuvre/${encodeURIComponent(title)}`);
+  }else{
+    res.status(500).send(`erreur like`);
   }
-
-  const title = req.params;
-  const reviewUser = res.body;
   
-  try{
-    let collection = null;
-    let oeuvre = await moviesCollection.findOne({title:title});
 
-    if(oeuvre){
-      collection = moviesCollection;
-    }else{
-      oeuvre = await seriesCollection.findOne({title:title})
-      collection = seriesCollection;
-    }
-    if(!oeuvre){
-      return res.status(404);
-    }
-
-    const reviewIndex = oeuvre.reviews.findIndex(r => r.user === reviewUser);
-    if (reviewIndex === -1) {
-        return res.status(404);
-  }
-    const newLikesCount = oeuvre.reviews[reviewIndex].likes+1;
-    const updateFIeld = {};
-
-    updateFIeld[`reviews.${reviewIndex}.likes`] = newLikesCount;
-
-    await collection.updateOne({title:title},{$set: updateFIeld});
-    return res.json({sucess:true, newLikes:newLikesCount, reviewUser:reviewUser});
-
-}catch (err){
-  console.log("erreur pour le like", err);
-
-}}
+}
 );
 
 

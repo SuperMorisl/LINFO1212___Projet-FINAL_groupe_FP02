@@ -119,6 +119,42 @@ async function getUsers() {
 
 
 
+async function addLikeToReview(title, reviewUser, currentUser){
+  try{
+    const titled = decodeURIComponent(title);
+
+    const updateResult = await moviesCollection.findOneAndUpdate(
+      {
+        title: titled,
+        'reviews.user':reviewUser
+      },{
+        $inc:{ 'reviews.$.likes':1}
+      },
+      {new:true}
+    );
+
+  if (!updateResult){
+    updateResult = await seriesCollection.findOneAndUpdate(
+      {title:titled, 'reviews.user':reviewUser},
+      {$inc:{'reviews.$.likes':1}},
+      {new:true}
+
+    );
+  }
+  const updatedReviews = updateResult.reviews.find(r => r.user === reviewUser);
+  const newLikes = updatedReviews ? updatedReviews.like : null;
+
+  return { success : true, message:"Like succés", newLikes:newLikes};
+}catch (err){
+  console.error("like error", err);
+  return { success: false, message: "Erreur interne du serveur lors de la mise à jour." };
+
+}
+
+}
+
+
+
 module.exports = { 
   initDB,  
   getMovies, 
@@ -126,4 +162,6 @@ module.exports = {
   getGenres,
   getMostPopular, 
   getTrophies,
-  getCollection };
+  getCollection,
+  addLikeToReview
+ };
