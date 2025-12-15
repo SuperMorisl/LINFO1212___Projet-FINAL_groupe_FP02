@@ -566,13 +566,12 @@ app.post('/review/:title', async (req, res) => {
 });
 
 app.post('/like/:title', async (req, res) =>{
+  if (!req.session.username){
+    return res.redirect('/login');
+  }
   const title = req.params.title;
   const reviewUser = req.body.reviewUser;
   const currentUser = req.session.user;  
-
-  console.log("REQUÊTEaLIKE REÇUE PAR FORMULAIRE POUR LE TITRE:", title);
-  console.log("Utilisateur cible:", reviewUser);
-  console.log("Utilisateur connecté:", currentUser);
 
   if (!reviewUser) {
         return res.status(400).send("utilisateru cible pas trouvé");
