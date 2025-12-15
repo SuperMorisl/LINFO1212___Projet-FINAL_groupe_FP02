@@ -19,7 +19,9 @@
     </div>
 
   </nav>
-
+  <script>
+    const CURRENT_OEUVRE_TITLE = "<%= encodeURIComponent(oeuvre.title) %>";
+  </script>
   <div class="tendance voir-oeuvre" style="background-image: url('/image/<%= oeuvre.image %>');"> <!-- Obligé car texte à l'intérieur -->
         <div class="details">
             <div class="ensemble">
@@ -106,7 +108,7 @@
     <% }) %>
 
   </div>
-
+<script src="/oeuvre.js"></script>
 </body>
 
 </html>

@@ -535,7 +535,46 @@ app.post('/review/:title', async (req, res) => {
   }
 });
 
+app.post('/like/:title', async (req, res) =>{
+  if (!req.session.username){
+    return res.render('/login');
 
+  }
+
+  const title = req.params;
+  const reviewUser = res.body;
+  
+  try{
+    let collection = null;
+    let oeuvre = await moviesCollection.findOne({title:title});
+
+    if(oeuvre){
+      collection = moviesCollection;
+    }else{
+      oeuvre = await seriesCollection.findOne({title:title})
+      collection = seriesCollection;
+    }
+    if(!oeuvre){
+      return res.status(404);
+    }
+
+    const reviewIndex = oeuvre.reviews.findIndex(r => r.user === reviewUser);
+    if (reviewIndex === -1) {
+        return res.status(404);
+  }
+    const newLikesCount = oeuvre.reviews[reviewIndex].likes+1;
+    const updateFIeld = {};
+
+    updateFIeld[`reviews.${reviewIndex}.likes`] = newLikesCount;
+
+    await collection.updateOne({title:title},{$set: updateFIeld});
+    return res.json({sucess:true, newLikes:newLikesCount, reviewUser:reviewUser});
+
+}catch (err){
+  console.log("erreur pour le like", err);
+
+}}
+);
 
 
 
