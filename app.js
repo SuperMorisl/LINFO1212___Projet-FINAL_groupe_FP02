@@ -72,27 +72,38 @@ app.get('/', async function (req, res) {
     const allGenres = await dbModule.getGenres();
     const mostPopularInfo = await dbModule.getMostPopular();
 
-    const xp = req.session.xp || 0;
-    const userLevel = req.session.userLevel || 1;
+    
+    let currentXp = req.session.xp || 0;
+    let userLevel = req.session.userLevel || 1;
     let userMissions = {"publication": 0, "commentaires":0, "visites":0};
+    let userTrophies =[];
 
     if(req.session.username){
       const fullUser = await usersCollection.findOne({username:req.session.username});
       if (fullUser){
+        userTrophies = fullUser.trophies || [];
         userMissions = fullUser.missions || userMissions;
+        const {level, leftxp} = get_level(fullUser.xp || 0);
+        userLevel= level;
+        userXp = fullUser.xp || 0;
         
       }
     }
+    const allTrophies =await dbModule.getTrophies();
+    console.log("Contenu de userTrophies:", userTrophies);
+    console.log("Les données des trophées sont-elles un tableau ?:", Array.isArray(userTrophies));
     res.render('index', {
       username: req.session.username,
       userDate: req.session.date,
-      userXp: xp,
+      userXp: currentXp, 
       userLevel: userLevel,
       userMissions : userMissions,
+      userTrophies: userTrophies,
       movies: allMovies,
       series: allSeries, 
       allMovies: allMovies,
       allSeries: allSeries,
+      allTrophies: allTrophies,
       mostPopular : mostPopularInfo.mostPopular,
       mostPopularType : mostPopularInfo.mostPopularType,
       genres: allGenres,
@@ -264,10 +275,24 @@ app.post('/login', async (req, res) => {
       }
       actualUser.missions.visites++;
       req.session.username = req.body.username;         // Stocke le username dans la session
-      await usersCollection.updateOne({username : req.session.username}, { $set : {missions: actualUser.missions}});
+
+      let xpGained = 0;
+      let newTrophies = actualUser.trophies ||[];
+      let currentTotalXp = actualUser.xp || 0;
+      const currentVisites = actualUser.missions.visites;
+
+      const allTrophies = await trophiesCollection.find({category:"visites"}).toArray();
+      for (const trophy of allTrophies){
+        if (currentVisites>=trophy.condition&& !newTrophies.includes(trophy.id)){
+          xpGained+= trophy.xp_reward;
+          newTrophies.push(trophy.id);
+        }
+      }
+      const totalXp = currentTotalXp+xpGained;
 
 
-      const { level, leftxp } = get_level(actualUser.xp); //calcul du niveau de l'utilisateur 
+      await usersCollection.updateOne({username : req.session.username}, { $set : {missions: actualUser.missions, xp:totalXp,trophies: newTrophies}});
+      const { level, leftxp } = get_level(totalXp);//calcul du niveau de l'utilisateur 
       req.session.date = actualUser.creation;
       req.session.xp = leftxp;
       req.session.userLevel = level;

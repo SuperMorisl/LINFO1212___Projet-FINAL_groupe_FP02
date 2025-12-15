@@ -158,7 +158,39 @@
                             <span class="grey">Oeuvres ajoutées</span>
                         </div>
                     </div>
-                    
+
+                    <!--trophéeeeeeeeeessssssssssss-->
+                    <h2>Mes trophées</h2>
+                    <div class="trophies-grid">
+                    <%  if (Array.isArray(allTrophies)){
+                            allTrophies.forEach(trophy => {
+                                const isUnlocked = (userTrophies || []).includes(trophy.id);
+                                
+                                //remplacer car css inclut dans html
+                               
+                                const opacityStyle = isUnlocked ? 'opacity:1;':'opacity:0.3;filter:grayscale(100%);';    
+                                const currentCount = userMissions[trophy.category]||0;
+                                const remaining = trophy.condition - currentCount;
+                           %>
+                           <div class="trophy-card" >
+                                title="Condition: <%= trophy.condition %> <%= trophy.category %>. <%= trophy.description %>">
+                                
+                                <img src="<%= trophy.image %>" alt="<%= trophy.title %>">
+                                
+                                <p class="trophy-title"><%= trophy.title %></p>
+                                
+                                <% if (!isUnlocked && remaining > 0) { %>
+                                    <small><%= remaining %> restant(s)</small>
+                                <% } else if (isUnlocked) { %>
+                                    <small>DÉBLOQUÉ</small>
+                                <% } %>
+                            </div>
+                          <%});
+                        }else{%> 
+                            <p>Erreur</p><% } %>
+                    </div>
+
+
                     <div class="double-boutons">
                         <a href="/logout"><button class="close-btn"><span>Se déconnecter</span></button></a>
                         <button class="close-btn" onclick="closePopupMobile()"><span>X</span></button>

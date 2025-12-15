@@ -1,11 +1,11 @@
-{"category": "publication", "id" : "bronze_publi", "title" : "Beginner", "description": "Faire 1 publication", "condition": 1, "xp_reward":10}
-{"category": "publication", "id" : "argent_publi", "title" : "Habitué", "description": "Faire 5 publication", "condition": 5, "xp_reward":50}
-{"category": "publication", "id" : "or_publi", "title" : "PublicaThor", "description": "Faire 10 publication", "condition": 10, "xp_reward":100}
-{"category": "commentaires", "id" : "bronze_com", "title" : "Beginner", "description": "Faire 1 commnetaires", "condition": 1, "xp_reward":10}
-{"category": "commentaires", "id" : "argent_com", "title" : "Habitué", "description": "Faire 5 commentaires", "condition": 5, "xp_reward":50}
-{"category": "commentaires", "id" : "or_com", "title" : "CommentaThor", "description": "Faire 10 commentaires", "condition": 10, "xp_reward":100}
-{"category": "visites", "id" : "bronze_visite", "title" : "Beginner", "description": "Visiter le site 1 fois", "condition": 1, "xp_reward":10}
-{"category": "visites", "id" : "argent_visite", "title" : "Actif", "description": "Visiter le site 10 fois", "condition": 10, "xp_reward":50}
-{"category": "visites", "id" : "or_visite", "title" : "MasterGeek", "description": "Visiter le site 20 fois", "condition": 20, "xp_reward":100}
+{"category": "publication", "id" : "bronze_publi", "title" : "Beginner", "description": "Faire 1 publication", "condition": 1, "xp_reward":10,  "image":"/static/site/trophés/publication_bronze.png"}
+{"category": "publication", "id" : "argent_publi", "title" : "Habitué", "description": "Faire 5 publication", "condition": 5, "xp_reward":50,  "image":"/static/site/trophés/publication_argent.png"}
+{"category": "publication", "id" : "or_publi", "title" : "PublicaThor", "description": "Faire 10 publication", "condition": 10, "xp_reward":100,  "image":"/static/site/trophés/publication_or.png"}
+{"category": "commentaires", "id" : "bronze_com", "title" : "Beginner", "description": "Faire 1 commnetaires", "condition": 1, "xp_reward":10,  "image":"/static/site/trophés/commentaire_bronze.png"}
+{"category": "commentaires", "id" : "argent_com", "title" : "Habitué", "description": "Faire 5 commentaires", "condition": 5, "xp_reward":50,  "image":"/static/site/trophés/commentaire_argent.png"}
+{"category": "commentaires", "id" : "or_com", "title" : "CommentaThor", "description": "Faire 10 commentaires", "condition": 10, "xp_reward":100, "image":"/static/site/trophés/commentaire_or.png"}
+{"category": "visites", "id" : "bronze_visite", "title" : "Beginner", "description": "Visiter le site 1 fois", "condition": 1, "xp_reward":10, " image":"/static/site/trophés/visite_bronze.png"}
+{"category": "visites", "id" : "argent_visite", "title" : "Actif", "description": "Visiter le site 10 fois", "condition": 10, "xp_reward":50, "image":"/static/site/trophés/visite_argent.png"}
+{"category": "visites", "id" : "or_visite", "title" : "MasterGeek", "description": "Visiter le site 20 fois", "condition": 20, "xp_reward":100, "image":"/static/site/trophés/visite_or.png"}
 
 
