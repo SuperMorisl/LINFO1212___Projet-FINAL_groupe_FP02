@@ -42,9 +42,8 @@ app.use(session({ // On crée une session (Cookies)
 
 
 app.use(express.static('static'));  // Utilise les fichiers de front-end du dossier static
-app.set('views', 'templates'); // Les fichiers html/ejs sont dans templates
+app.set('views', path.join(__dirname, 'templates')); // Les fichiers html/ejs sont dans templates
 app.set('view engine', 'ejs'); // On utilise ejs comme moteur de vue
-app.use(bodyParser.urlencoded({ extended: true })); // Permet de recupérer les éléments obtenus par la méthode POST
 
 
 //-------------------------------------------------CALCUL DE NIVEAU--------------------------------------------------------------------
@@ -264,10 +263,10 @@ app.post('/filter', async function (req, res) {
 //------------------------------------------------------------------
 app.get('/login', (req, res) => {
   if (req.session.username) { // si l'utilisateur est déjà connecté
-    res.redirect('/'); // On le renvoie sur la page principale
+    return res.redirect('/'); // On le renvoie sur la page principale
   }
       
-  res.render('login', { error: null, hasAccount: null });  // error permet de vérifier si le mot de passe est correct (voir dans login.ejs)
+  return res.render('login', { error: null, hasAccount: null });  // error permet de vérifier si le mot de passe est correct (voir dans login.ejs)
 
 });
 
@@ -307,10 +306,10 @@ app.post('/login', async (req, res) => {
       req.session.date = actualUser.creation;
       req.session.xp = leftxp;
       req.session.userLevel = level;
-      res.redirect('/');
+      return res.redirect('/');
     }
     else if (!secure) {
-      res.render('login', { error: "Mot de passe incorrect", hasAccount: true });
+      return res.render('login', { error: "Mot de passe incorrect", hasAccount: true });
     }
   }
   catch (err) {
@@ -386,6 +385,9 @@ app.get('/add', function (req, res) {
 
 app.post('/add', upload.single("image"), async function (req, res) { // pour que multer reçoit l'image
   try {
+    if (!req.file) { // sinon il risque d'y avoir des erreurs 
+      return res.render('add', { username: req.session.username, error: "Image requise" });
+    }
     if (!checkAddInput.isValidTitle(req.body.title)) {
       return res.render('add', { username: req.session.username, error: "Titre invalide" });
     } 
@@ -410,8 +412,12 @@ app.post('/add', upload.single("image"), async function (req, res) { // pour que
         
         // on stocke seulement l'image si tous les champs sont remplis
         const extension = path.extname(req.file.originalname);
-        const imageName = Date.now() + extension; // nom original choisit par l'utilisateur + "identifiant" pour éviter d'écraser les fichiers avec le même nom
-        fs.writeFileSync(path.join("static", "image", imageName), req.file.buffer); // buffer est utilisé pour sauvegarder le fichier seulement si tous les champs sont valides
+        const imageName = req.file.originalname;  // nom original choisit par l'utilisateur --> vu que chaque oeuvre doit être ajoutée une seule fois 
+        // buffer est utilisé pour sauvegarder le fichier seulement si tous les champs sont valides
+        // on vérifie que le dossier image existe bien --> éviter que les tests échouent 
+        const imageDir = path.join('..', 'static', 'image'); // '..' pour remonter à la racine du projet
+        if (!fs.existsSync(imageDir)) fs.mkdirSync(imageDir, { recursive: true });
+        fs.writeFileSync(path.join(imageDir, imageName), req.file.buffer);
 
         const genres = req.body.genres.split(','); // on réccupère les genres avec le javascript
         const image = imageName; // format : image.png
@@ -585,7 +591,7 @@ app.post('/like/:title', async (req, res) =>{
   const currentUser = req.session.user;  
 
   if (!reviewUser) {
-        return res.status(400).send("utilisateru cible pas trouvé");
+        return res.status(400).send("utilisateur cible pas trouvé");
     }
 
 

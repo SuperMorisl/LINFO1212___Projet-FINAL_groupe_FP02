@@ -71,6 +71,8 @@ async function getGenres() {
     for (const oeuvre of oeuvres){
       let currentGenres = oeuvre.genre;
 
+      if (!currentGenres) continue;  // Si genre est undefined ou null, skip
+
       if(!Array.isArray(currentGenres)) {
         currentGenres = [currentGenres];
       }
@@ -84,31 +86,39 @@ async function getGenres() {
   processOeuvres(movies);
   processOeuvres(series);
 
-  return genres;
+  return Array.from(genres);
 }
 
 async function getMostPopular() {
   const movies = await getMovies();
   const series = await getSeries();
-  let mostPopular = undefined;
-  let mostPopularRating = 0;
-  let mostPopularType = undefined;
+  let mostPopular = null;
+  let mostPopularRating = -1;
+  let mostPopularType = null;
 
   movies.forEach(movie => {
-    if (movie.averageRating > mostPopularRating) {
+    const rating = movie.averageRating || 0;
+    if (rating > mostPopularRating) {
       mostPopular = movie;
-      mostPopularRating = movie.averageRating;
+      mostPopularRating = rating;
       mostPopularType = "Film";
     }
   });
 
   series.forEach(serie => {
-    if (serie.averageRating > mostPopularRating) {
+    const rating = serie.averageRating || 0;
+    if (rating > mostPopularRating) {
       mostPopular = serie;
-      mostPopularRating = serie.averageRating;
+      mostPopularRating = rating;
       mostPopularType = "Série";
     }
-  })
+  });
+
+  if (!mostPopular) {
+    // Valeur par défaut si aucune oeuvre
+    mostPopular = { title: "Aucune oeuvre", image: "default.jpg", averageRating: 0 };
+    mostPopularType = "Film";
+  }
 
   return {mostPopular, mostPopularType};
 }
@@ -148,6 +158,12 @@ async function addLikeToReview(title, reviewUser, currentUser) {
 
 
 
+// Fermeture de la connexion DB
+async function closeDB() {
+  await client.close();
+  console.log("Connexion MongoDB fermée.");
+}
+
 module.exports = { 
   initDB,  
   getMovies, 
@@ -156,5 +172,6 @@ module.exports = {
   getMostPopular, 
   getTrophies,
   getCollection,
-  addLikeToReview
+  addLikeToReview,
+  closeDB
  };

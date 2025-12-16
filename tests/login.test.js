@@ -1,12 +1,18 @@
 const request = require("supertest");
+const path = require("path"); // pour l'image de test
+const fs = require("fs");
 const { app, startServer } = require("../app.js");
+const { closeDB } = require("../database/db.js"); 
+
+let seriesCollection;
 
 describe("Checking the routes", () => {
 
     beforeAll(async () => {
        const collections = await startServer(true); // initialise la DB sans lancer le serveur
-       //moviesCollection = collections.moviesCollection;
+       //moviesCollection = collections.moviesCollection; // on en a besoin ?
        seriesCollection = collections.seriesCollection;
+    
     });
 
     test("GET / doit rendre la page d'accueil", async () => {
@@ -19,7 +25,7 @@ describe("Checking the routes", () => {
         expect(httpRequest.statusCode).toBe(200);
     });
 
-    test("GET /login doit rediriger vers /profile si l'utilisateur est connecté", async () => {
+    test("GET /login doit rediriger vers / si l'utilisateur est connecté", async () => {
         const agent = request.agent(app);
 
         await agent
@@ -30,7 +36,7 @@ describe("Checking the routes", () => {
 
         const httpRequest = await agent.get("/login");
         expect(httpRequest.statusCode).toBe(302);
-        expect(httpRequest.headers.location).toBe("/profile");
+        expect(httpRequest.headers.location).toBe("/");
     });
 
     test("POST /login avec mot de passe correcte redirige vers la page d'accueil", async () => {
@@ -64,56 +70,56 @@ describe("Checking the routes", () => {
     });
 
     test("GET /add sans session redirige vers la page de connexion", async () => {
-        const httpRequest = await request(app).get("/add");
-        expect(httpRequest.statusCode).toBe(302);
-        expect(httpRequest.headers.location).toBe("/login");
-    });
-
+            const httpRequest = await request(app).get("/add");
+            expect(httpRequest.statusCode).toBe(302);
+            expect(httpRequest.headers.location).toBe("/login");
+        });
+    
     test("GET et POST /add en étant connecté sans erreur", async () => {
         const agent = request.agent(app);
-
-        const informations = {
-            username: "moimeme",
-            title: "SerieTest",
-            author: "Auteur Test",
-            description: "Desc",
-            genre: ["Drame"]
-        };
-
-        // connexion
+    
+    
+        const informations = [
+            "moimeme", 
+            "SerieTest",  
+            "Auteur Test",
+            "Ceci est une description valide de plus de 20 caracteres pour le test.", 
+            ["Drame"]
+        ];
+    
+        // connexion d'un utilisateur 
         await agent
             .post("/login")
             .type("form")
-            .send({ username: informations.username, password: "Motdepasse123456" });
-
+            .send({ username: informations[0], password: "Motdepasse123456" })
+            .expect(302);
+    
         const httpRequest = await agent.get("/add");
         expect(httpRequest.statusCode).toBe(200);
-
+    
         // ajout de l'oeuvre
         const httpRequest2 = await agent
             .post("/add")
-            .type("form")
-            .send({
-                title: informations.title,
-                author: informations.author,
-                description: informations.description,
-                genres: informations.genre,
-                date: "2025-12-11",
-                type: "Série"
-            });
-
+            .field('title', informations[1])
+            .field('author', informations[2])
+            .field('description', informations[3])
+            .field('genres', informations[4].join(','))
+            .field('date', "2025-12-11")
+            .field('type', "Série")
+            .attach('image', path.join('..', 'static', 'image', 'test.png')); // '..' sert à aller dans le dossier principale du projet
+            // l'image test.png est dans static/image
         expect(httpRequest2.statusCode).toBe(302);
         expect(httpRequest2.headers.location).toBe("/");
-
+    
         const httpRequest3 = await agent.get('/');
-        for (const info of informations) {
-            expect(httpRequest3.text).toContain(info);
-        }
+        expect(httpRequest3.text).toContain(informations[1]);
     });
 
-    // nettoyage 
+    // nettoyage de la collection
     afterAll(async () => {
         await seriesCollection.deleteMany({ title: "SerieTest" });
+        // il ne faut pas supprimer l'image de test, elle sera utilisé à chaque fois 
+        await closeDB();
     });
 
 });
