@@ -17,6 +17,7 @@ const saltRounds = 10; //définir le salt pr bcrypt;
 
 const checkLoginInput = require('./tests/checkLoginInput');
 const checkAddInput = require('./tests/checkAddInput');
+const checkCommentInput = require('./tests/checkCommentInput');
 
 const dbModule = require('./database/db'); // renvoie un dico avec les imports : fonctions (voir exports db.js)
 const { title } = require('process');
@@ -510,10 +511,9 @@ app.post('/review/:title', async (req, res) => {
   const userComment = req.body.comment;
   const username = req.session.username;
 
-  if (isNaN(userNote)||userNote<1||userNote>5||userComment.length<5){
+  if (!checkCommentInput.isValidNote(userNote) || !checkCommentInput.isValidComment(userComment)){
     console.log("Commentaire non-vaide");
     return res.redirect(`/oeuvre/${encodeURIComponent(title)}`);
-
   }
   try{
     

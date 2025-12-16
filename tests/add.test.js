@@ -1,6 +1,7 @@
 const checkAddInput = require('./checkAddInput');
 
 describe("Check title validity", () => {
+
     test ("Title is valid", () => {
         let title = "Gossip Girl";
         let result = checkAddInput.isValidTitle(title);
@@ -16,7 +17,7 @@ describe("Check title validity", () => {
         let result = checkAddInput.isValidTitle(title);
         expect(result).toBeFalsy();
     });
-    test ("Title starts with an invalid character", () => { // ne commence pas par une lettre ou un chiffre
+    test ("Title starts with an invalid character", () => { // le titre ne commence pas par une lettre ou un chiffre
         let title = "& Exemple de titre incorrecte";
         let result = checkAddInput.isValidTitle(title);
         expect(result).toBeFalsy();
@@ -30,6 +31,7 @@ describe("Check title validity", () => {
 });
 
 describe("Check description validity", () => {
+
     test ("Description is valid", () => {
         let description = "Tim et Millie sont ensemble depuis des années quand ils décident de tout abandonner pour s’installer à la campagne. Alors que les tensions sont déjà vives, une force surnaturelle transforme leur rêve en cauchemar, menaçant leur relation, leur amour… et jusqu’à leur intégrité physique.";
         let result = checkAddInput.isValidDescription(description);
@@ -54,6 +56,7 @@ describe("Check description validity", () => {
 });
 
 describe("Check image's format validity", () => {
+    
     test ("image's format is valid", () => {
         let image = "you.png";
         let result = checkAddInput.isValidImage(image);

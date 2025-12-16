@@ -36,6 +36,7 @@ describe("Check user's username validity", () => {
 });
 
 describe("Check user's password validity", () => {
+
     test ("Password is valid", () => {
         let password = "Motdepasse123456";
         let result = checkuserInput.isValidPassword(password);
@@ -75,6 +76,7 @@ describe("Check user's password validity", () => {
 });
 
 describe("Check user's e-mail validity", () => {
+    
      test ("e-mail is valid", () => {
         let email = "name.surname@outlook.com";
         let result = checkuserInput.isValidEmail(email);
