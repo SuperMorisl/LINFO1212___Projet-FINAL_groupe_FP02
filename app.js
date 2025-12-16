@@ -286,6 +286,7 @@ app.post('/login', async (req, res) => {
       }
       actualUser.missions.visites++;
       req.session.username = req.body.username;         // Stocke le username dans la session
+      req.session.user = actualUser.username; 
 
       let xpGained = 0;
       let newTrophies = actualUser.trophies ||[];

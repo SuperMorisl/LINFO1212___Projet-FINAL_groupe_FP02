@@ -7,6 +7,8 @@ const { closeDB } = require("../database/db.js");
 let seriesCollection;
 let moviesCollection;
 
+// il aurait fallut séparer les tests pour les routes en différents fichiers pour pouvoir utiliser beforeEach et afterEach et rendre le code plus lisible 
+
 describe("Checking the routes", () => {
 
     beforeAll(async () => {
@@ -15,10 +17,14 @@ describe("Checking the routes", () => {
        moviesCollection = collections.moviesCollection; 
     });
 
+    //------------------------------------------------------------- PAGE D'ACCUEIL -------------------------------------------------------------------------
+
     test("GET / doit rendre la page d'accueil", async () => {
         const httpRequest = await request(app).get("/");
         expect(httpRequest.statusCode).toBe(200);
     });
+
+    //------------------------------------------------------------- PAGE LOGIN ----------------------------------------------------------------------------
 
     test("GET /login doit rendre la page de connexion si l'utilisateur n'est pas connecté", async () => {
         const httpRequest = await request(app).get("/login");
@@ -56,7 +62,7 @@ describe("Checking the routes", () => {
             .send({ username: "moimeme", password: "pass123" });
 
         expect(httpRequest.statusCode).toBe(200);
-        expect(httpRequest.text).toContain("Mot de passe incorrect");
+        expect(httpRequest.text).toContain("Mot de passe incorrect"); // message d'erreur
     });
 
     test("POST /login avec utilisateur non-existant renvoie une erreur", async () => {
@@ -68,6 +74,8 @@ describe("Checking the routes", () => {
         expect(httpRequest.statusCode).toBe(200);
         expect(httpRequest.text).toContain("Utilisateur non trouvé");
     });
+
+    //------------------------------------------------------------- PAGE ADD ----------------------------------------------------------------------------
 
     test("GET /add sans session redirige vers la page de connexion", async () => {
             const httpRequest = await request(app).get("/add");
@@ -106,7 +114,8 @@ describe("Checking the routes", () => {
             .field('date', "2025-12-11")
             .field('type', "Série")
             .attach('image', path.join('..', 'static', 'image', 'test.png')); // '..' sert à aller dans le dossier principale du projet
-            // l'image test.png est dans static/image
+            // l'image test.png est dans le dossier static/image --> utilisée pour plusieurs tests
+
         expect(httpRequest2.statusCode).toBe(302);
         expect(httpRequest2.headers.location).toBe("/");
     
@@ -187,7 +196,10 @@ describe("Checking the routes", () => {
         expect(httpRequest2.text).toContain("Titre invalide"); // le message d'erreur
     });
 
+    //------------------------------------------------------------- PAGE D'UNE OEUVRE  ----------------------------------------------------------------------------
+
     test("GET /oeuvre/:title renvoie la page pour une série existante", async () => {
+
         // on ajoute une série test dans la DB
         await seriesCollection.insertOne({
             title: "SerieTestPage",
@@ -211,6 +223,8 @@ describe("Checking the routes", () => {
         expect(httpRequest.statusCode).toBe(404);
         expect(httpRequest.text).toContain("Film introuvable");
     });
+
+    //------------------------------------------------------------- PAGE D'UNE OEUVRE : TESTS POUR LA REVIEW ----------------------------------------------------------------------------
 
     test("POST /review/:title redirige vers /login si non connecté", async () => { // l'utilisateur doit être connecté pour pouvoir ajouter un commentaire
         const httpRequest = await request(app)
@@ -267,10 +281,13 @@ describe("Checking the routes", () => {
         expect(httpRequest.headers.location).toBe("/oeuvre/SerieTest");
     });
 
-    test("POST /like/:title redirige vers login si non connecté", async () => { // vérifie qu'un utilisateur non-connecté ne puisse pas liker de commentaires
+    //------------------------------------------------------------- PAGE D'UNE OEUVRE : TESTS POUR LE LIKE ----------------------------------------------------------------------------
+
+     test("POST /like/:title redirige vers login si non connecté", async () => { // vérifie qu'un utilisateur non-connecté ne puisse pas liker de commentaires
         const httpRequest = await request(app)
             .post("/like/SerieTest")
             .send({ reviewUser: "autreUser" });
+
         // il est redirigé vers la page de connection
         expect(httpRequest.statusCode).toBe(302);
         expect(httpRequest.headers.location).toBe("/login");
@@ -289,7 +306,38 @@ describe("Checking the routes", () => {
         expect(httpRequest.text).toContain("utilisateur cible pas trouvé");
     });
 
-    // il aurait fallut faire un test pour : "POST /like/:title redirige vers l'oeuvre si aucune erreur", mais avec la route actuelle, ce serait trop compliqué...
+    test ("POST /like/:title redirige vers l'oeuvre si aucune erreur", async () => {
+        const agent = request.agent(app);
+
+        // on ajoute une oeuvre exemple
+        await seriesCollection.insertOne({ // /!\ la série ajoutée doit correspondre au format du fichier .JSON ...
+            title: "TestLikeMovie",
+            author: "Auteur Test",
+            description: "Description test",
+            genre: ["Drame"],
+            date: "2025-12-11",
+            image: "test.png",
+            averageRating: 0,
+            reviews: [{ user: "autreUser", note: 5, comment: "Super !", likes: [] }]
+        });
+
+        await agent
+            .post("/login")
+            .type("form")
+            .send({ username: "moimeme", password: "Motdepasse123456" })
+            .expect(302);
+
+        // simulation du like d'un commentaire
+        const response = await agent
+            .post('/like/TestLikeMovie')
+            .send({ reviewUser: 'autreUser' });
+
+        expect(response.status).toBe(302);
+        expect(response.headers.location).toBe('/oeuvre/TestLikeMovie');
+    });
+
+    
+    //------------------------------------------------------------- TEST DE RÉCCUPÉRATION DES INFORMATIONS DE L'UTILISATEUR DE LA ROUTE  ----------------------------------------------------------------------------
 
     test("GET /api/user/:username renvoie les infos d'un utilisateur existant", async () => { // sert à vérifier que la route renvoie bien toutes les propriétés attendues
         const username = "moimeme";
@@ -313,6 +361,9 @@ describe("Checking the routes", () => {
         expect(httpRequest.statusCode).toBe(404);
         expect(httpRequest.body).toHaveProperty("error", "Utilisateur introuvable");
     });
+
+
+    //------------------------------------------------------------- TEST DE DÉCONNEXION ----------------------------------------------------------------------------
 
     test("GET /logout détruit la session et redirige si utilisateur connecté", async () => {
         const agent = request.agent(app);
@@ -339,14 +390,15 @@ describe("Checking the routes", () => {
         expect(httpRequest.headers.location).toBe("/");
     });
 
-    // nettoyage des collections après chaque test
+    // nettoyage des 2 collections après tous les tests
     afterAll(async () => { 
+        // pas besoin de supprimer l'utilisateur "moimeme" car on suppose qu'il existe déjà dans la db --> on ne l'ajoute pas
+        // il ne faut pas supprimer l'image de test, elle sera utilisé à chaque fois qu'on lance les tests
         await seriesCollection.deleteMany({ title: "SerieTest" });
         await moviesCollection.deleteMany({ title: "MovieTest" });
         await seriesCollection.deleteMany({ title: "SerieTestPage" });
-        // pas besoin de supprimer l'utilisateur "moimeme" car on suppose qu'il existe déjà dans la db test
-        // il ne faut pas supprimer l'image de test, elle sera utilisé à chaque fois qu'on lance les tests
-        await closeDB();
+        await seriesCollection.deleteMany({ title: "TestLikeMovie" });
+        await closeDB(); // pour éviter les fuites
     });
 
 });
